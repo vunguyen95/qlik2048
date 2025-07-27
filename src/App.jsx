@@ -47,7 +47,14 @@ function Tile({ value, isNew, movement, isMerged }) {
 }
 
 /*---------------------------Grid---------------------------------*/
-function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
+function Grid({
+  board,
+  onMove,
+  newTile,
+  movementData,
+  mergedTiles,
+  isAnimating,
+}) {
   //useEffect for side effects ( event listener and clean up) onMove,.
   //dependencies are onMove, passed by handleMove in Game().
   useEffect(() => {
@@ -100,8 +107,38 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
       (pos) => pos.row === rowIndex && pos.col === colIndex
     );
   };
+
+  // FIXING THE PROBLEM OF EMPTY TILES LEAVING BEHIND DURING SLIDING.
+  const isMoving = (rowIndex, colIndex) => {
+    if (!movementData && !isAnimating) {
+      return false;
+    }
+    return movementData.some(
+      (movement) =>
+        movement.from.row === rowIndex && movement.from.col === colIndex
+    );
+  };
   return (
     <div className="grid-container">
+      {/* Background grid (always visible) */}
+      {Array(4)
+        .fill(null)
+        .map((_, rowIndex) =>
+          Array(4)
+            .fill(null)
+            .map((_, colIndex) => (
+              <div
+                key={`bg-${rowIndex}-${colIndex}`}
+                className="tile tile-null"
+                style={{
+                  position: "absolute",
+                  left: `${10 + colIndex * 105}px`, //padding + size + gap.
+                  top: `${10 + rowIndex * 110}px`,
+                  zIndex: 0,
+                }}
+              />
+            ))
+        )}
       {board.map((row, rowIndex) =>
         row.map((tileValue, colIndex) => {
           const movement = getTileMovement(rowIndex, colIndex);
@@ -159,7 +196,7 @@ function Game() {
       //wait for animation to complete
       setTimeout(() => {
         window.alert("Game Over!");
-      }, 200);
+      }, 500);
     }
   }, [board]);
 
@@ -178,14 +215,15 @@ function Game() {
     }
   }, [score, bestScore]);
 
-  useEffect(() => {
-    if (movementData) {
-      const timer = setTimeout(() => {
-        setMovementData(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [movementData]);
+  // I DONT UNDERSTAND. WHY THIS IS NOT WORKING.
+  // useEffect(() => {
+  //   if (movementData) {
+  //     const timer = setTimeout(() => {
+  //       setMovementData(null);
+  //     }, 100);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [movementData]);
 
   //Core logic, passed down to onMove
   //useCallback for efficient rendering, depending on the board, score, and gameOver.
@@ -195,7 +233,7 @@ function Game() {
       //process the board, pass to utils.merge()
       let newBoard = board.map((row) => [...row]);
       let newScore = score;
-      let boardChange = false; //for update function.
+      let boardChange = false;
       let movementData = [];
       let allMergedTiles = [];
 
@@ -210,7 +248,6 @@ function Game() {
           mergedTiles,
         } = utils.merge(originalArr, newScore, direction);
 
-        //Be careful when comparing and update. Also, pure === is comparing reference in JS.
         //wrong state management -> weird result
         //Is it better to compare every row (column) or once at the end?
         if (JSON.stringify(processedArr) !== JSON.stringify(originalArr)) {
@@ -251,7 +288,6 @@ function Game() {
 
         allMergedTiles.push(...absMergedTiles);
         movementData.push(...absMovements);
-        console.log(absMovements);
         newScore = updatedScore;
       }
 
@@ -264,13 +300,15 @@ function Game() {
         setTimeout(() => {
           setScore(newScore);
           const posNew = utils.addRandomTile(newBoard);
-          setNewTile(posNew);
           setMergedTiles(allMergedTiles);
+          console.log(mergedTiles);
+          setNewTile(posNew);
+
           setBoard(newBoard);
-          //setMovementData(null); //Uncomment to Disable animation
-          setMergedTiles([]);
-          setIsAnimating(false);
-        }, 2900);
+          setMovementData(null); //Uncomment to Disable animation
+
+          setIsAnimating(false); // need to set to false after the animation is complete. otherwise no more input
+        }, 75); //(fix 50)
       }
     },
     [board, score, gameOver, isAnimating]
@@ -313,6 +351,7 @@ function Game() {
           newTile={newTile}
           movementData={movementData}
           mergedTiles={mergedTiles}
+          isAnimating={isAnimating}
         />
         <button onClick={handleRestart} className="button">
           {" "}
