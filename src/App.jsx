@@ -152,12 +152,10 @@ function Game() {
   //No dependency, initialize once
   useEffect(() => {
     let firstBoard = utils.initializeBoard();
-    //const pos1 = utils.addRandomTile(firstBoard);
-    //const pos2 = utils.addRandomTile(firstBoard);
-    firstBoard[0][0] = 2;
-    firstBoard[0][2] = 2;
+    const pos1 = utils.addRandomTile(firstBoard);
+    const pos2 = utils.addRandomTile(firstBoard);
     setBoard(firstBoard);
-    //setNewTile([pos1, pos2]);
+    setNewTile([pos1, pos2]);
   }, []);
 
   //Core logic, passed down to onMove
@@ -239,7 +237,15 @@ function Game() {
   );
 
   const handleRestart = () => {
-    //utils.initializeBoard, utils.addRandomTile()
+    let freshBoard = utils.initializeBoard();
+    const pos1 = utils.addRandomTile(freshBoard);
+    const pos2 = utils.addRandomTile(freshBoard);
+    setBoard(freshBoard);
+    setNewTile([pos1, pos2]);
+    setScore(0);
+    setMovementData(null);
+    setMergedTiles([]);
+    setGameOver(false);
   };
 
   return (
