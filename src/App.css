@@ -148,7 +148,7 @@ h1 {
     box-shadow: 0 0 0 rgba(255, 255, 255, 0);
   }
   50% {
-    transform: scale(1.5);
+    transform: scale(1.33);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
   }
   100% {
@@ -214,6 +214,7 @@ h1 {
   padding: 30px 30px; /*padding for the title*/
   border-radius: 15px;
   margin-bottom: 10px;
+  text-align: center;
 }
 .header {
   display: flex;

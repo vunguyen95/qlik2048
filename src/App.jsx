@@ -215,7 +215,7 @@ function Game() {
     }
   }, [score, bestScore]);
 
-  // I DONT UNDERSTAND. WHY THIS IS NOT WORKING.
+  // I DONT UNDERSTAND. WHY THIS IS NOT WORKING. NOT AS SMOOTH AS THE AD HOC SOLUTION???
   // useEffect(() => {
   //   if (movementData) {
   //     const timer = setTimeout(() => {
@@ -225,6 +225,16 @@ function Game() {
   //   }
   // }, [movementData]);
 
+  //This effect cleans up the merge animation state. Without this clean up,
+  // sometimes, the merge animation is not consistent.
+  //Rule of thumbs, maybe always clear out animation state when the animation is complete.
+  // Quick Example: if the state persists, and merge is at the same position, the CSS is not removed and readded
+  useEffect(() => {
+    if (mergedTiles.length > 0) {
+      const timer = setTimeout(() => setMergedTiles([]), 200); // Duration should be > animation time
+      return () => clearTimeout(timer);
+    }
+  }, [mergedTiles]);
   //Core logic, passed down to onMove
   //useCallback for efficient rendering, depending on the board, score, and gameOver.
   const handleMove = useCallback(
@@ -292,6 +302,7 @@ function Game() {
       }
 
       if (boardChange) {
+        //ad-hoc solution, not a good practice.
         //phase 1: animation
         setIsAnimating(true);
         setMovementData(movementData); //comment to DISABLE animation for the moment
@@ -306,9 +317,8 @@ function Game() {
 
           setBoard(newBoard);
           setMovementData(null); //Uncomment to Disable animation
-
           setIsAnimating(false); // need to set to false after the animation is complete. otherwise no more input
-        }, 75); //(fix 50)
+        }, 100); //(fix 50)
       }
     },
     [board, score, gameOver, isAnimating]
@@ -329,7 +339,9 @@ function Game() {
   return (
     <div className="game-container">
       <div className="header">
-        <h1 className="title"> 2048 </h1>
+        <h1 className="title" style={{ lineHeight: 1 }}>
+          2048 <br /> <span style={{ fontSize: "0.5em" }}> by Vu </span>
+        </h1>
         <div className="score-box">
           <div className="score-container">
             <div className="score-title"> Score </div>
