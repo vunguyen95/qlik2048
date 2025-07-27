@@ -62,6 +62,7 @@ export const merge = (arr, score, direction) => {
     }
   }
 
+  /*
   //merge pass
   let i = mergeArr.length - 1;
   let target = reverse ? 0 : size - 1;
@@ -82,6 +83,20 @@ export const merge = (arr, score, direction) => {
       i--;
     }
     i--;
+  }
+*/
+  for (let i = mergeArr.length - 1; i > 0; i--) {
+    if (mergeArr[i].value === mergeArr[i - 1].value) {
+      mergeArr[i].value *= 2;
+      score += mergeArr[i].value;
+      mergeArr[i].merged = true;
+      mergeArr[i].from = [
+        mergeArr[i - 1].originalIndex,
+        mergeArr[i].originalIndex,
+      ];
+      mergeArr.splice(i - 1, 1);
+      i--; //After a merge, we need to skip the next element
+    }
   }
 
   //construct final array and movement

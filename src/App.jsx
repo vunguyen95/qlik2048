@@ -145,7 +145,7 @@ function Game() {
     if (movementData) {
       const timer = setTimeout(() => {
         setMovementData(null);
-      }, 100); // Match the animation duration
+      }, 5000); // Match the animation duration
       return () => clearTimeout(timer);
     }
   }, [movementData]);
@@ -153,10 +153,13 @@ function Game() {
   //No dependency, initialize once
   useEffect(() => {
     let firstBoard = utils.initializeBoard();
-    const pos1 = utils.addRandomTile(firstBoard);
-    const pos2 = utils.addRandomTile(firstBoard);
+    //const pos1 = utils.addRandomTile(firstBoard);
+    //const pos2 = utils.addRandomTile(firstBoard);
+    firstBoard[0][0] = 2;
+    firstBoard[0][1] = 2;
+    firstBoard[0][2] = 4;
     setBoard(firstBoard);
-    setNewTile([pos1, pos2]);
+    //setNewTile([pos1, pos2]);
   }, []);
 
   //Core logic, passed down to onMove
@@ -228,11 +231,11 @@ function Game() {
 
       if (boardChange) {
         const posNew = utils.addRandomTile(newBoard);
-        setBoard(newBoard);
-        setScore(newScore);
         setNewTile(posNew);
         setMovementData(movementData);
         setMergedTiles(allMergedTiles);
+        setBoard(newBoard);
+        setScore(newScore);
       }
     },
     [board, score, gameOver]
