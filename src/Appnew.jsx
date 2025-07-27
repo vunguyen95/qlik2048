@@ -94,6 +94,13 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
     );
   };
 
+  const isDestination = (rowIndex, colIndex) => {
+    if (!movementData) return false;
+    return movementData.some(
+      (m) => m.to.row === rowIndex && m.to.col === colIndex
+    );
+  };
+
   const isMerged = (rowIndex, colIndex) => {
     if (!mergedTiles) return false;
     return mergedTiles.some(
@@ -105,11 +112,15 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
       {board.map((row, rowIndex) =>
         row.map((tileValue, colIndex) => {
           const movement = getTileMovement(rowIndex, colIndex);
+          const isDest = isDestination(rowIndex, colIndex);
+          const value = movement ? movement.value : tileValue;
+          const showTile =
+            value !== null && (!isDest || isMerged(rowIndex, colIndex));
 
           return (
             <Tile
               key={`${rowIndex}-${colIndex}`}
-              value={tileValue}
+              value={showTile ? value : null}
               isNew={
                 Array.isArray(newTile)
                   ? newTile.some(
@@ -145,7 +156,7 @@ function Game() {
     if (movementData) {
       const timer = setTimeout(() => {
         setMovementData(null);
-      }, 100); // Match the animation duration
+      }, 200); // Match the animation duration
       return () => clearTimeout(timer);
     }
   }, [movementData]);
@@ -252,22 +263,10 @@ function Game() {
 
   return (
     <div className="game-container">
-      <div className="header">
-        <h1 className="title"> 2048 </h1>
-        <div className="score-box">
-          <div className="score-container">
-            <div className="score-title"> Score </div>
-            <div className="score-value"> {score} </div>
-          </div>
-          <div className="score-container">
-            <div className="score-title"> Best </div>
-            <div className="score-value"> 0 </div>
-          </div>
-        </div>
-      </div>
-
+      <h1 className="title"> 2048 with React </h1>
       <div className="game-card">
-        {/*<div className="score-thing"> Score: {score} </div> */}
+        <div className="score-thing"> Score: {score} </div>
+
         <Grid
           board={board}
           onMove={handleMove}
