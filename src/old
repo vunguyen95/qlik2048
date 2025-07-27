@@ -94,13 +94,6 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
     );
   };
 
-  const isDestination = (rowIndex, colIndex) => {
-    if (!movementData) return false;
-    return movementData.some(
-      (m) => m.to.row === rowIndex && m.to.col === colIndex
-    );
-  };
-
   const isMerged = (rowIndex, colIndex) => {
     if (!mergedTiles) return false;
     return mergedTiles.some(
@@ -112,15 +105,11 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
       {board.map((row, rowIndex) =>
         row.map((tileValue, colIndex) => {
           const movement = getTileMovement(rowIndex, colIndex);
-          const isDest = isDestination(rowIndex, colIndex);
-          const value = movement ? movement.value : tileValue;
-          const showTile =
-            value !== null && (!isDest || isMerged(rowIndex, colIndex));
 
           return (
             <Tile
               key={`${rowIndex}-${colIndex}`}
-              value={showTile ? value : null}
+              value={tileValue}
               isNew={
                 Array.isArray(newTile)
                   ? newTile.some(
@@ -146,21 +135,14 @@ function Game() {
   const [board, setBoard] = useState(utils.initializeBoard()); // initializeBoard when first rendered
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [bestScore, setBestScore] = useState(0);
 
   //Animation (new tile, movement)
   const [newTile, setNewTile] = useState(null);
   const [movementData, setMovementData] = useState(null);
   const [mergedTiles, setMergedTiles] = useState([]);
-  // Clear movement data after animation completes
-  useEffect(() => {
-    if (movementData) {
-      const timer = setTimeout(() => {
-        setMovementData(null);
-      }, 200); // Match the animation duration
-      return () => clearTimeout(timer);
-    }
-  }, [movementData]);
-  // Initialize an empty board, add two random tiles.
+  const [isAnimating, setIsAnimating] = useState(false);
+
   //No dependency, initialize once
   useEffect(() => {
     let firstBoard = utils.initializeBoard();
@@ -170,10 +152,46 @@ function Game() {
     setNewTile([pos1, pos2]);
   }, []);
 
+  //check game over. Run when board changes.
+  useEffect(() => {
+    if (utils.checkGameOver(board)) {
+      setGameOver(true);
+      //wait for animation to complete
+      setTimeout(() => {
+        window.alert("Game Over!");
+      }, 200);
+    }
+  }, [board]);
+
+  //best Score
+  useEffect(() => {
+    const savedBestScore = localStorage.getItem("bestScore");
+    if (savedBestScore) {
+      setBestScore(parseInt(savedBestScore));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (score > bestScore) {
+      setBestScore(score);
+      localStorage.setItem("bestScore", bestScore);
+    }
+  }, [score, bestScore]);
+
+  useEffect(() => {
+    if (movementData) {
+      const timer = setTimeout(() => {
+        setMovementData(null);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [movementData]);
+
   //Core logic, passed down to onMove
   //useCallback for efficient rendering, depending on the board, score, and gameOver.
   const handleMove = useCallback(
     (direction) => {
+      if (isAnimating || gameOver) return;
       //process the board, pass to utils.merge()
       let newBoard = board.map((row) => [...row]);
       let newScore = score;
@@ -238,15 +256,24 @@ function Game() {
       }
 
       if (boardChange) {
-        const posNew = utils.addRandomTile(newBoard);
-        setBoard(newBoard);
-        setScore(newScore);
-        setNewTile(posNew);
-        setMovementData(movementData);
-        setMergedTiles(allMergedTiles);
+        //phase 1: animation
+        setIsAnimating(true);
+        setMovementData(movementData); //DISABLE animation for the moment
+
+        //phase 2: update
+        setTimeout(() => {
+          setScore(newScore);
+          const posNew = utils.addRandomTile(newBoard);
+          setNewTile(posNew);
+          setMergedTiles(allMergedTiles);
+          setBoard(newBoard);
+          //setMovementData(null);
+          setMergedTiles([]);
+          setIsAnimating(false); // DISABLE animation for the moment
+        }, 100);
       }
     },
-    [board, score, gameOver]
+    [board, score, gameOver, isAnimating]
   );
 
   const handleRestart = () => {
@@ -263,10 +290,22 @@ function Game() {
 
   return (
     <div className="game-container">
-      <h1 className="title"> 2048 with React </h1>
-      <div className="game-card">
-        <div className="score-thing"> Score: {score} </div>
+      <div className="header">
+        <h1 className="title"> 2048 </h1>
+        <div className="score-box">
+          <div className="score-container">
+            <div className="score-title"> Score </div>
+            <div className="score-value"> {score} </div>
+          </div>
+          <div className="score-container">
+            <div className="score-title"> Best </div>
+            <div className="score-value"> {bestScore} </div>
+          </div>
+        </div>
+      </div>
 
+      <div className="game-card">
+        {/*<div className="score-thing"> Score: {score} </div> */}
         <Grid
           board={board}
           onMove={handleMove}

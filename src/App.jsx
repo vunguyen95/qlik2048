@@ -135,37 +135,63 @@ function Game() {
   const [board, setBoard] = useState(utils.initializeBoard()); // initializeBoard when first rendered
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [bestScore, setBestScore] = useState(0);
 
   //Animation (new tile, movement)
   const [newTile, setNewTile] = useState(null);
   const [movementData, setMovementData] = useState(null);
   const [mergedTiles, setMergedTiles] = useState([]);
-  // Clear movement data after animation completes
+  const [isAnimating, setIsAnimating] = useState(false); // to disable animation while merging.
+
+  //No dependency, initialize once
+  useEffect(() => {
+    let firstBoard = utils.initializeBoard();
+    const pos1 = utils.addRandomTile(firstBoard);
+    const pos2 = utils.addRandomTile(firstBoard);
+    setBoard(firstBoard);
+    setNewTile([pos1, pos2]);
+  }, []);
+
+  //check game over. Run when board changes.
+  useEffect(() => {
+    if (utils.checkGameOver(board)) {
+      setGameOver(true);
+      //wait for animation to complete
+      setTimeout(() => {
+        window.alert("Game Over!");
+      }, 200);
+    }
+  }, [board]);
+
+  //best Score
+  useEffect(() => {
+    const savedBestScore = localStorage.getItem("bestScore");
+    if (savedBestScore) {
+      setBestScore(parseInt(savedBestScore));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (score > bestScore) {
+      setBestScore(score);
+      localStorage.setItem("bestScore", bestScore);
+    }
+  }, [score, bestScore]);
+
   useEffect(() => {
     if (movementData) {
       const timer = setTimeout(() => {
         setMovementData(null);
-      }, 5000); // Match the animation duration
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [movementData]);
-  // Initialize an empty board, add two random tiles.
-  //No dependency, initialize once
-  useEffect(() => {
-    let firstBoard = utils.initializeBoard();
-    //const pos1 = utils.addRandomTile(firstBoard);
-    //const pos2 = utils.addRandomTile(firstBoard);
-    firstBoard[0][0] = 2;
-    firstBoard[0][1] = 2;
-    firstBoard[0][2] = 4;
-    setBoard(firstBoard);
-    //setNewTile([pos1, pos2]);
-  }, []);
 
   //Core logic, passed down to onMove
   //useCallback for efficient rendering, depending on the board, score, and gameOver.
   const handleMove = useCallback(
     (direction) => {
+      if (isAnimating || gameOver) return;
       //process the board, pass to utils.merge()
       let newBoard = board.map((row) => [...row]);
       let newScore = score;
@@ -230,15 +256,24 @@ function Game() {
       }
 
       if (boardChange) {
-        const posNew = utils.addRandomTile(newBoard);
-        setNewTile(posNew);
-        setMovementData(movementData);
-        setMergedTiles(allMergedTiles);
-        setBoard(newBoard);
-        setScore(newScore);
+        //phase 1: animation
+        setIsAnimating(true);
+        setMovementData(movementData); //comment to DISABLE animation for the moment
+
+        //phase 2: update
+        setTimeout(() => {
+          setScore(newScore);
+          const posNew = utils.addRandomTile(newBoard);
+          setNewTile(posNew);
+          setMergedTiles(allMergedTiles);
+          setBoard(newBoard);
+          //setMovementData(null); //Uncomment to Disable animation
+          setMergedTiles([]);
+          setIsAnimating(false);
+        }, 2900);
       }
     },
-    [board, score, gameOver]
+    [board, score, gameOver, isAnimating]
   );
 
   const handleRestart = () => {
@@ -264,7 +299,7 @@ function Game() {
           </div>
           <div className="score-container">
             <div className="score-title"> Best </div>
-            <div className="score-value"> 0 </div>
+            <div className="score-value"> {bestScore} </div>
           </div>
         </div>
       </div>

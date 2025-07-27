@@ -29,8 +29,25 @@ export const addRandomTile = (board) => {
   return null;
 };
 export const checkGameOver = (board) => {
-  // return 1 if no more move is possible.
-  return false;
+  // return 1 if the board is full and no more move is possible.
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 4; c++) {
+      if (!board[r][c]) {
+        return false;
+      }
+    }
+  }
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 4; c++) {
+      if (r > 0 && board[r][c] === board[r - 1][c]) {
+        return false;
+      }
+      if (c > 0 && board[r][c] === board[r][c - 1]) {
+        return false;
+      }
+    }
+  }
+  return true;
 };
 
 export const getLine = (board, idx, isRow) => {
@@ -62,29 +79,6 @@ export const merge = (arr, score, direction) => {
     }
   }
 
-  /*
-  //merge pass
-  let i = mergeArr.length - 1;
-  let target = reverse ? 0 : size - 1;
-  while (i > 0) {
-    if (
-      mergeArr[i].value != null &&
-      mergeArr[i].value === mergeArr[i - 1].value
-    ) {
-      mergeArr[i].value *= 2;
-      score += mergeArr[i].value;
-      mergeArr[i].merged = true;
-      mergeArr[i].from = [
-        mergeArr[i - 1].originalIndex,
-        mergeArr[i].originalIndex,
-      ];
-
-      mergeArr.splice(i - 1, 1);
-      i--;
-    }
-    i--;
-  }
-*/
   for (let i = mergeArr.length - 1; i > 0; i--) {
     if (mergeArr[i].value === mergeArr[i - 1].value) {
       mergeArr[i].value *= 2;
@@ -126,82 +120,6 @@ export const merge = (arr, score, direction) => {
   let processedArr = reverse ? [...finalArr].reverse() : finalArr;
   return { processedArr, score, movement, mergedTiles };
 };
-/*
-export const merge = (arr, score, direction) => {
-  const length = arr.length;
-  // Reverse for left/up moves
-  const reverse = direction === "left" || direction === "up";
-  let line = reverse ? [...arr].reverse() : [...arr];
-
-  let movement = [];
-
-  // 1. Filter out nulls, keeping original index
-  let nonNull = [];
-  for (let i = 0; i < length; i++) {
-    if (line[i] !== null) {
-      nonNull.push({
-        value: line[i],
-        originalIndex: i,
-        merged: false,
-        from: [i],
-      });
-    }
-  }
-
-  // 2. Merge pass
-  if (nonNull.length > 1) {
-    for (let i = nonNull.length - 1; i > 0; i--) {
-      if (nonNull[i].value === nonNull[i - 1].value) {
-        nonNull[i].value *= 2;
-        score += nonNull[i].value;
-        nonNull[i].merged = true;
-        nonNull[i].from = [
-          nonNull[i - 1].originalIndex,
-          nonNull[i].originalIndex,
-        ];
-
-        nonNull.splice(i - 1, 1);
-        i--; // Decrement i to skip the next element as we have processed two
-      }
-    }
-  }
-  console.log(nonNull);
-  // 3. Construct final line and movement array
-  let finalArr = Array(length).fill(null);
-  let currentPos = length - 1;
-  let mergedTiles = [];
-
-  for (let i = nonNull.length - 1; i >= 0; i--) {
-    let tile = nonNull[i];
-    finalArr[currentPos] = tile.value;
-    const to = reverse ? length - 1 - currentPos : currentPos;
-
-    if (tile.merged) {
-      const from1 = reverse ? length - 1 - tile.from[0] : tile.from[0];
-      const from2 = reverse ? length - 1 - tile.from[1] : tile.from[1];
-
-      movement.push({ from: from1, to: to, value: tile.value / 2 });
-      movement.push({ from: from2, to: to, value: tile.value / 2 });
-      mergedTiles.push(to);
-    } else {
-      const from = reverse ? length - 1 - tile.from[0] : tile.from[0];
-      if (from !== to) {
-        movement.push({ from: from, to: to, value: tile.value });
-      }
-    }
-
-    currentPos--;
-  }
-
-  let processedArr = reverse ? [...finalArr].reverse() : finalArr;
-  // The 'movement' array now contains distinct movements for each tile.
-  // For a merge, it will contain two movements to the same target square.
-  // The UI can then use this to show sliding animations,
-  // and after they complete, it can show a merge animation at the target square.
-  // The `merged` property is no longer needed in the movement object itself.
-
-  return { processedArr, score, movement, mergedTiles };
-}; */
 
 export default {
   initializeBoard,
@@ -209,5 +127,4 @@ export default {
   checkGameOver,
   getLine,
   merge,
-  //mergeTest,
 };
