@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
-import utils from "./utility.js"; //utility function
+import utils from "./utility.js";
 
 /*---------------------------Tile---------------------------------*/
 function Tile({ value, isNew, movement, isMerged }) {
-  //get Tile class value
   const getClass = (value) => {
     if (!value) {
       return `tile tile-null`;
@@ -20,7 +19,7 @@ function Tile({ value, isNew, movement, isMerged }) {
 
     const tileSize = 95;
     const gap = 10;
-    const totalSize = tileSize + gap; // 95px width + 10px gap
+    const totalSize = tileSize + gap;
     const deltaX = (movement.to.col - movement.from.col) * totalSize;
     const deltaY = (movement.to.row - movement.from.row) * totalSize;
 
@@ -47,14 +46,7 @@ function Tile({ value, isNew, movement, isMerged }) {
 }
 
 /*---------------------------Grid---------------------------------*/
-function Grid({
-  board,
-  onMove,
-  newTile,
-  movementData,
-  mergedTiles,
-  isAnimating,
-}) {
+function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
   //useEffect for side effects ( event listener and clean up) onMove,.
   //dependencies are onMove, passed by handleMove in Game().
   useEffect(() => {
@@ -85,11 +77,53 @@ function Grid({
       }
     };
 
+    //touch handling
+    let startX = null;
+    let startY = null;
+    let minDistance = 50;
+
+    const handleTouchStart = (event) => {
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+    };
+    const handleTouchEnd = (event) => {
+      let direction = null;
+      const endX = event.changedTouches[0].clientX;
+      const endY = event.changedTouches[0].clientY;
+      const deltaX = Math.abs(endX - startX);
+      const deltaY = Math.abs(endY - startY);
+      if (deltaX < minDistance && deltaY < minDistance) return;
+      if (deltaX > deltaY) {
+        direction = endX > startX ? "right" : "left";
+      }
+      if (deltaY > deltaX) {
+        direction = endY > startY ? "down" : "up";
+      }
+
+      event.preventDefault();
+      if (direction) {
+        onMove(direction);
+        //console.log(direction);
+      }
+      startX = null;
+      startY = null;
+    };
+
+    const handleTouchMove = (event) => {
+      event.preventDefault(); //prevent scrolling while swiping.
+    };
+
     //Add event listener
     window.addEventListener("keydown", handleKey);
+    window.addEventListener("touchstart", handleTouchStart, { passive: false });
+    window.addEventListener("touchend", handleTouchEnd, { passive: false });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
     //Remember cleaning up, otherwise trouble!
     return () => {
       window.removeEventListener("keydown", handleKey);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchmove", handleTouchMove);
     };
   }, [onMove]);
 
@@ -108,16 +142,6 @@ function Grid({
     );
   };
 
-  // FIXING THE PROBLEM OF EMPTY TILES LEAVING BEHIND DURING SLIDING.
-  const isMoving = (rowIndex, colIndex) => {
-    if (!movementData && !isAnimating) {
-      return false;
-    }
-    return movementData.some(
-      (movement) =>
-        movement.from.row === rowIndex && movement.from.col === colIndex
-    );
-  };
   return (
     <div className="grid-container">
       {/* Background grid (always visible) */}
@@ -176,8 +200,8 @@ function Game() {
 
   //Animation (new tile, movement)
   const [newTile, setNewTile] = useState(null);
-  const [movementData, setMovementData] = useState(null);
-  const [mergedTiles, setMergedTiles] = useState([]);
+  const [movementData, setMovementData] = useState(null); //null simply means no animation
+  const [mergedTiles, setMergedTiles] = useState([]); // [] so that it can be checked with method .length or .some. To use null, remember to check !mergeTiles in Grid.
   const [isAnimating, setIsAnimating] = useState(false); // to disable animation while merging.
 
   //No dependency, initialize once
@@ -185,6 +209,19 @@ function Game() {
     let firstBoard = utils.initializeBoard();
     const pos1 = utils.addRandomTile(firstBoard);
     const pos2 = utils.addRandomTile(firstBoard);
+    // firstBoard[0][0] = 2;
+    // firstBoard[0][1] = 4;
+    // firstBoard[0][2] = 8;
+    // firstBoard[0][3] = 16;
+    // firstBoard[1][0] = 32;
+    // firstBoard[1][1] = 64;
+    // firstBoard[1][2] = 128;
+    // firstBoard[1][3] = 256;
+    // firstBoard[2][0] = 512;
+    // firstBoard[2][1] = 1024;
+    // firstBoard[2][2] = 2048;
+    // firstBoard[2][3] = 4096;
+
     setBoard(firstBoard);
     setNewTile([pos1, pos2]);
   }, []);
@@ -195,9 +232,9 @@ function Game() {
     if (utils.checkGameOver(board)) {
       setGameOver(true);
       //wait for animation to complete
-      setTimeout(() => {
-        window.alert("Game Over!");
-      }, 500);
+      // setTimeout(() => {
+      //   window.alert("Game Over!");
+      // }, 500);
     }
   }, [board]);
 
@@ -243,7 +280,7 @@ function Game() {
   // it will not rerender
   useEffect(() => {
     if (newTile) {
-      const timer = setTimeout(() => setNewTile(null), 300); //matching the animation time
+      const timer = setTimeout(() => setNewTile(null), 200); //matching the animation time
       return () => clearTimeout(timer);
     }
   }, [newTile]);
@@ -384,13 +421,21 @@ function Game() {
           newTile={newTile}
           movementData={movementData}
           mergedTiles={mergedTiles}
-          isAnimating={isAnimating}
         />
         <button onClick={handleRestart} className="button">
-          {" "}
           Restart Game
         </button>
       </div>
+      {gameOver && (
+        <div className="game-over-overlay">
+          <div className="game-over-box">
+            <h2>Game Over! You score: {score} points</h2>
+            <button onClick={handleRestart} className="button">
+              Restart Game
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

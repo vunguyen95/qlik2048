@@ -29,6 +29,9 @@ export const addRandomTile = (board) => {
   return null;
 };
 export const checkGameOver = (board) => {
+  // if (score >= 20) {
+  //   return true;
+  // } For testing, remember adding score to the checkGameOver function
   // return 1 if the board is full and no more move is possible.
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 4; c++) {
