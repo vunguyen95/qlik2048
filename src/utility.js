@@ -1,16 +1,13 @@
 //utility function for the 2048 game
 
-export const initializeBoard = () => {
+const initializeBoard = () => {
   //return a 4x4 null array
   const newBoard = Array(4)
     .fill(null)
     .map(() => Array(4).fill(null));
   return newBoard;
 };
-export const addRandomTile = (board) => {
-  // modify in-place the board, return a board with a random tile
-  // 90% 2, 10% 4
-  // for animation, return the position of the new tile
+const addRandomTile = (board) => {
   let emptyTiles = [];
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 4; c++) {
@@ -23,12 +20,11 @@ export const addRandomTile = (board) => {
     const randomTile =
       emptyTiles[Math.floor(Math.random() * emptyTiles.length)]; //select random index
     board[randomTile.r][randomTile.c] = Math.random() < 0.9 ? 2 : 4;
-    //return positions for newTile.
     return { row: randomTile.r, col: randomTile.c };
   }
   return null;
 };
-export const checkGameOver = (board) => {
+const checkGameOver = (board) => {
   // if (score >= 20) {
   //   return true;
   // } For testing, remember adding score to the checkGameOver function
@@ -53,7 +49,7 @@ export const checkGameOver = (board) => {
   return true;
 };
 
-export const getLine = (board, idx, isRow) => {
+const getLine = (board, idx, isRow) => {
   if (isRow) {
     return [...board[idx]];
   } else {
@@ -61,13 +57,10 @@ export const getLine = (board, idx, isRow) => {
   }
 };
 
-export const merge = (arr, score, direction) => {
-  // Only 1 logic for the right direction, the rest is done through input arr manipulation
-  // left: row reverse
-  // up + down: column, and reverse column for up
+const merge = (arr, score, direction) => {
   const size = arr.length;
   const reverse = direction === "left" || direction === "up";
-  let inputArr = reverse ? [...arr].reverse() : [...arr]; //Maybe shallow copy is OK? idk
+  let inputArr = reverse ? [...arr].reverse() : [...arr];
   let mergeArr = [];
   let movement = [];
 
@@ -83,7 +76,6 @@ export const merge = (arr, score, direction) => {
   }
 
   for (let i = mergeArr.length - 1; i > 0; i--) {
-    //console.log(i);
     if (mergeArr[i].value === mergeArr[i - 1].value) {
       mergeArr[i].value *= 2;
       score += mergeArr[i].value;
@@ -94,12 +86,9 @@ export const merge = (arr, score, direction) => {
       ];
 
       mergeArr.splice(i - 1, 1);
-      //console.log(i);
-      i -= 1; //After a merge, we need to skip the next element. -1 is correct. (-2 for while)
+      i -= 1;
     }
   }
-
-  //construct final array and movement
 
   let finalArr = Array(size).fill(null);
   let currentPos = size - 1;

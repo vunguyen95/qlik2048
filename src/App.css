@@ -1,9 +1,9 @@
 /* the whole thing */
 body {
   margin: 0;
-  display: flex; /* let it grow to accomodate the game card */
-  justify-content: center; /* horizontal */
-  align-items: center; /* vertical */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-width: 430px;
   min-height: 100vh;
 }
@@ -13,10 +13,6 @@ h1 {
   font-size: 22px;
 }
 
-/* Game Props */
-
-/* ------------------------Tile-----------------------*/
-/* box-sizing for ease of dimensions*/
 * {
   box-sizing: border-box;
 }
@@ -26,18 +22,17 @@ h1 {
   width: 95px;
   height: 100px;
 
-  /* Values formatting, center */
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Tile appearance */
+
   font-size: 50px;
   font-weight: bold;
   border: none;
   border-radius: 6px;
-  z-index: 1; /* normal z-index*/
+  z-index: 1;
 }
-/* Styling for tile values, reserve inline style for transition/sliding movement. Tailwind perhaps more concise.*/
+
 .tile-null {
   background-color: #cdc1b4;
   color: transparent;
@@ -100,14 +95,12 @@ h1 {
   font-size: 32px;
 }
 
-/* For tiles 2048 and above */
 .tile-max {
   background-color: #d3b013;
   color: #f9f6f2;
   font-size: 32px;
 }
 
-/* Tile Animation */
 @keyframes popIn {
   0% {
     transform: scale(0);
@@ -118,12 +111,11 @@ h1 {
     opacity: 1;
   }
 }
-/* AND relationship */
+
 .tile.new {
   animation: popIn 0.2s ease-in-out;
 }
 
-/* moving tiles */
 @keyframes slide {
   0% {
     transform: translate(0, 0);
@@ -135,14 +127,13 @@ h1 {
 
 .tile.sliding {
   animation: slide 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  animation-fill-mode: forwards; /* keep the final state after animation , prevent FLASH of the old state*/
-  z-index: 2; /* higher z-index to stay on top */
+  animation-fill-mode: forwards;
+  z-index: 2;
   position: relative;
   will-change: transform;
   backface-visibility: hidden;
 }
 
-/* merge animation */
 @keyframes merge {
   0% {
     transform: scale(1);
@@ -170,20 +161,16 @@ h1 {
 }
 
 .grid-container {
-  /* displaying the 4x4 array */
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px; /* Gap between tiles */
-  width: 430px; /* 95*4 + 30 + 20, height is auto calculated*/
+  gap: 10px;
+  width: 430px;
   padding: 10px;
   background-color: #bbada0;
   border-radius: 6px;
-  position: relative; /*trying to put a back ground grid, relative to its child components*/
+  position: relative;
 }
 
-/* ------------------------Game-----------------------*/
-/* the game card, name... Display the whole thing in the middle, some padding
-    from the game card */
 .game-container {
   background-color: #f0f0f0;
   display: flex;
@@ -196,7 +183,6 @@ h1 {
   border-radius: 15px;
 }
 
-/* the board + some space for status bar, restart button  */
 .game-card {
   background-color: #fff;
   padding: 24px;
@@ -206,14 +192,13 @@ h1 {
   flex-direction: column;
   align-items: center;
 }
-/* ------------------------Misc-----------------------*/
 
 .title {
   font-size: 50px;
   font-weight: bold;
   background-color: #edc22e;
   color: #f9f6f2;
-  padding: 30px 30px; /*padding for the title*/
+  padding: 30px 30px;
   border-radius: 15px;
   margin-bottom: 10px;
   text-align: center;

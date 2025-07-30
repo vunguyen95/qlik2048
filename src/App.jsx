@@ -23,8 +23,6 @@ function Tile({ value, isNew, movement, isMerged }) {
     const deltaX = (movement.to.col - movement.from.col) * totalSize;
     const deltaY = (movement.to.row - movement.from.row) * totalSize;
 
-    //Syntax lession: ' ' : properties
-    // ` ' template literal
     return {
       "--move-x": `${deltaX}px`,
       "--move-y": `${deltaY}px`,
@@ -47,10 +45,7 @@ function Tile({ value, isNew, movement, isMerged }) {
 
 /*---------------------------Grid---------------------------------*/
 function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
-  //useEffect for side effects ( event listener and clean up) onMove,.
-  //dependencies are onMove, passed by handleMove in Game().
   useEffect(() => {
-    //get the direction
     let direction = null;
     const handleKey = (event) => {
       switch (event.key) {
@@ -70,14 +65,12 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
           return;
       }
 
-      //disable scrolling
       event.preventDefault();
       if (direction) {
         onMove(direction);
       }
     };
 
-    //touch handling
     let startX = null;
     let startY = null;
     let minDistance = 50;
@@ -103,18 +96,15 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
       event.preventDefault();
       if (direction) {
         onMove(direction);
-        //console.log(direction);
       }
       startX = null;
       startY = null;
     };
 
     const handleTouchMove = (event) => {
-      event.preventDefault(); //prevent scrolling while swiping.
+      event.preventDefault();
     };
 
-    //Add event listener, disable passive listener, prevent default (scrolling)
-    //default for keydown is already not passive.
     window.addEventListener("keydown", handleKey);
     window.addEventListener("touchstart", handleTouchStart, { passive: false });
     window.addEventListener("touchend", handleTouchEnd, { passive: false });
@@ -151,7 +141,6 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
 
   return (
     <div className="grid-container">
-      {/* Background grid (always visible) */}
       {Array(4)
         .fill(null)
         .map((_, rowIndex) =>
@@ -163,7 +152,7 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
                 className="tile tile-null"
                 style={{
                   position: "absolute",
-                  left: `${10 + colIndex * 105}px`, //padding + size + gap.
+                  left: `${10 + colIndex * 105}px`,
                   top: `${10 + rowIndex * 110}px`,
                   zIndex: 0,
                 }}
@@ -199,19 +188,16 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
 
 /*---------------------------Game---------------------------------*/
 function Game() {
-  //React state variables and update function.
-  const [board, setBoard] = useState(utils.initializeBoard()); // initializeBoard when first rendered
+  const [board, setBoard] = useState(utils.initializeBoard());
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [bestScore, setBestScore] = useState(0);
 
-  //Animation (new tile, movement)
   const [newTile, setNewTile] = useState(null);
-  const [movementData, setMovementData] = useState(null); //null simply means no animation
-  const [mergedTiles, setMergedTiles] = useState([]); // [] so that it can be checked with method .length or .some. To use null, remember to check !mergeTiles in Grid.
-  const [isAnimating, setIsAnimating] = useState(false); // to disable animation while merging.
+  const [movementData, setMovementData] = useState(null);
+  const [mergedTiles, setMergedTiles] = useState([]);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  //No dependency, initialize once
   useEffect(() => {
     let firstBoard = utils.initializeBoard();
     const pos1 = utils.addRandomTile(firstBoard);
@@ -220,15 +206,9 @@ function Game() {
     setNewTile([pos1, pos2]);
   }, []);
 
-  //check game over. Run when board changes.
-  //TO DO: instead of window alert, display a game over screen and restart button
   useEffect(() => {
     if (utils.checkGameOver(board)) {
       setGameOver(true);
-      //wait for animation to complete
-      // setTimeout(() => {
-      //   window.alert("Game Over!");
-      // }, 500);
     }
   }, [board]);
 
@@ -247,46 +227,24 @@ function Game() {
     }
   }, [score, bestScore]);
 
-  // This is not working. I had to EXPLICITlY called timeout right after animation
-  // Otherwise, many state functions are triggered at the same time. Causing mixed up board state
-  // const timer = setTimeout() EXPLICIT (after boardChange == true)
-  // useEffect(() => {
-  //   if (movementData) {
-  //     const timer = setTimeout(() => {
-  //       setMovementData(null);
-  //     }, 100);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [movementData]);
-
-  //This effect cleans up the merge animation state. Without this clean up, sometimes, the merge animation is not consistent.
-  //Rule of thumbs, maybe always clear out animation state when the animation is complete.
-  // Quick Example: if the state persists, and merge is at the same position, the CSS class is not removed and readded
-  //so when React compares old DOM with new DOM, it sees the same state and does not re-render.
   useEffect(() => {
     if (mergedTiles.length > 0) {
-      const timer = setTimeout(() => setMergedTiles([]), 300); //matching the animation time
+      const timer = setTimeout(() => setMergedTiles([]), 300);
       return () => clearTimeout(timer);
     }
   }, [mergedTiles]);
 
-  //Cleanup newTiles, for good measure. Same reason as mergedTiles. If react doesn't see the DOM change (in the same place),
-  // it will not rerender
   useEffect(() => {
     if (newTile) {
-      const timer = setTimeout(() => setNewTile(null), 200); //matching the animation time
+      const timer = setTimeout(() => setNewTile(null), 200);
       return () => clearTimeout(timer);
     }
   }, [newTile]);
 
-  //Core logic, passed down to onMove
-  //useCallback for efficient rendering, depending on the board, score, and gameOver, isAnimating.
-  // Perhaps the fewer dependencies, the better? (more control of when the board should rerender?) I DONT KNOW. Props is passed down to GRID and
-  // rerender anyway?
   const handleMove = useCallback(
     (direction) => {
       if (isAnimating || gameOver) return; //NO INPUT DURING ANIMATION, OTHERWISE MIXED UP BOARD STATE.
-      //process the board, pass to utils.merge()
+
       let newBoard = board.map((row) => [...row]);
       let newScore = score;
       let boardChange = false;
@@ -304,21 +262,18 @@ function Game() {
           mergedTiles,
         } = utils.merge(originalArr, newScore, direction);
 
-        //wrong state management -> weird result
-        //Is it better to compare every row (column) or once at the end?
         if (JSON.stringify(processedArr) !== JSON.stringify(originalArr)) {
           boardChange = true;
         }
-        //update newBoard for setBoard. Immutability thingy with React
+
         if (isRow) {
-          newBoard[idx] = processedArr; //update row
+          newBoard[idx] = processedArr;
         } else {
           for (let r = 0; r < size; r++) {
-            newBoard[r][idx] = processedArr[r]; // update column
+            newBoard[r][idx] = processedArr[r];
           }
         }
 
-        //Absolute position
         const absMovements = movement.map(({ from, to, value }) => {
           if (isRow) {
             return {
@@ -348,29 +303,20 @@ function Game() {
       }
 
       if (boardChange) {
-        //ad-hoc solution, EXPLICITLY call timeout after animation
-        //Maybe there are other good practices. useEffect() only also triggers the function inside this scope
-        //instead of waiting for the animation to complete
-        //with animation-fill-mode: forwards, I can set timeout exactly as animation time. Otherwise, set NULL movementData slightly before.
-        // The problem with stopping the animation early is empty tiles (the board updated, value with moving tiles undefined) trailing behind.
-
-        //sliding --> merging --> update board --> animation new tile.
-        //mergeTiles and NewTiles are cleared with useEffect().
         //phase 1: SLIDING ONLY
         setIsAnimating(true);
-        setMovementData(movementData); //comment to DISABLE animation for the moment
+        setMovementData(movementData);
 
         //phase 2: update
         setTimeout(() => {
           setMergedTiles(allMergedTiles);
           setBoard(newBoard);
           const posNew = utils.addRandomTile(newBoard);
-          //console.log(mergedTiles);
           setNewTile(posNew);
           setScore(newScore);
-          setMovementData(null); //HAVE TO SET NULL OTHERWISE EMPTY TILES MOVING.
-          setIsAnimating(false); // need to set to false after the animation is complete. otherwise no more input
-        }, 200); //(fix 50)
+          setMovementData(null); //Dont forget.
+          setIsAnimating(false); // Dont forget
+        }, 200);
       }
     },
     [board, score, gameOver, isAnimating]
@@ -407,11 +353,9 @@ function Game() {
       </div>
 
       <div className="game-card">
-        {/*<div className="score-thing"> Score: {score} </div> */}
         <Grid
           board={board}
           onMove={handleMove}
-          //animation props passing.
           newTile={newTile}
           movementData={movementData}
           mergedTiles={mergedTiles}
