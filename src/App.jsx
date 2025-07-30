@@ -113,7 +113,8 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
       event.preventDefault(); //prevent scrolling while swiping.
     };
 
-    //Add event listener
+    //Add event listener, disable passive listener, prevent default (scrolling)
+    //default for keydown is already not passive.
     window.addEventListener("keydown", handleKey);
     window.addEventListener("touchstart", handleTouchStart, { passive: false });
     window.addEventListener("touchend", handleTouchEnd, { passive: false });
@@ -121,9 +122,15 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
     //Remember cleaning up, otherwise trouble!
     return () => {
       window.removeEventListener("keydown", handleKey);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchstart", handleTouchStart, {
+        passive: false,
+      });
+      window.removeEventListener("touchend", handleTouchEnd, {
+        passive: false,
+      });
+      window.removeEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     };
   }, [onMove]);
 
@@ -207,12 +214,12 @@ function Game() {
   //No dependency, initialize once
   useEffect(() => {
     let firstBoard = utils.initializeBoard();
-    const pos1 = utils.addRandomTile(firstBoard);
-    const pos2 = utils.addRandomTile(firstBoard);
-    // firstBoard[0][0] = 2;
-    // firstBoard[0][1] = 4;
-    // firstBoard[0][2] = 8;
-    // firstBoard[0][3] = 16;
+    //const pos1 = utils.addRandomTile(firstBoard);
+    //const pos2 = utils.addRandomTile(firstBoard);
+    firstBoard[0][0] = 2;
+    firstBoard[0][1] = 2;
+    firstBoard[0][2] = 2;
+    firstBoard[0][3] = 2;
     // firstBoard[1][0] = 32;
     // firstBoard[1][1] = 64;
     // firstBoard[1][2] = 128;
@@ -223,7 +230,7 @@ function Game() {
     // firstBoard[2][3] = 4096;
 
     setBoard(firstBoard);
-    setNewTile([pos1, pos2]);
+    //setNewTile([pos1, pos2]);
   }, []);
 
   //check game over. Run when board changes.

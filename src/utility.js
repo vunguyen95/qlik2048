@@ -83,6 +83,7 @@ export const merge = (arr, score, direction) => {
   }
 
   for (let i = mergeArr.length - 1; i > 0; i--) {
+    //console.log(i);
     if (mergeArr[i].value === mergeArr[i - 1].value) {
       mergeArr[i].value *= 2;
       score += mergeArr[i].value;
@@ -91,8 +92,10 @@ export const merge = (arr, score, direction) => {
         mergeArr[i - 1].originalIndex,
         mergeArr[i].originalIndex,
       ];
+
       mergeArr.splice(i - 1, 1);
-      i--; //After a merge, we need to skip the next element
+      //console.log(i);
+      i -= 1; //After a merge, we need to skip the next element. -1 is correct. (-2 for while)
     }
   }
 
