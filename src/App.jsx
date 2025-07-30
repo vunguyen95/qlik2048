@@ -214,23 +214,10 @@ function Game() {
   //No dependency, initialize once
   useEffect(() => {
     let firstBoard = utils.initializeBoard();
-    //const pos1 = utils.addRandomTile(firstBoard);
-    //const pos2 = utils.addRandomTile(firstBoard);
-    firstBoard[0][0] = 2;
-    firstBoard[0][1] = 2;
-    firstBoard[0][2] = 2;
-    firstBoard[0][3] = 2;
-    // firstBoard[1][0] = 32;
-    // firstBoard[1][1] = 64;
-    // firstBoard[1][2] = 128;
-    // firstBoard[1][3] = 256;
-    // firstBoard[2][0] = 512;
-    // firstBoard[2][1] = 1024;
-    // firstBoard[2][2] = 2048;
-    // firstBoard[2][3] = 4096;
-
+    const pos1 = utils.addRandomTile(firstBoard);
+    const pos2 = utils.addRandomTile(firstBoard);
     setBoard(firstBoard);
-    //setNewTile([pos1, pos2]);
+    setNewTile([pos1, pos2]);
   }, []);
 
   //check game over. Run when board changes.

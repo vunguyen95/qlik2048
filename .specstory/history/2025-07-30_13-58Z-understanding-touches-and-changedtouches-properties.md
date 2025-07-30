@@ -675,3 +675,65 @@ And if you switch to it using `git checkout src-with-comments`, the output of `g
 
 ---
 
+_**User**_
+
+see current branch
+
+---
+
+_**Assistant**_
+
+<think><details><summary>Thought Process</summary>
+**Analyzing Git Commands**
+
+I've been focusing on the user's request for the Git command to display the current branch. Initially, `git branch` seemed like the straightforward answer, which lists all branches and highlights the active one. However, I've also considered `git status` and it's value in showing the active branch.
+
+
+**Considering User Intent**
+
+I've been refining my approach. Focusing on the core request, I'll prioritize `git branch` and its specific output format, emphasizing the asterisk. I intend to clearly explain how to interpret the results. I will then briefly mention `git status` as an alternative method for similar information, acknowledging its additional details.
+
+
+</details></think>
+
+---
+
+
+
+You got it. To see just the current branch you are on, you can use:
+
+```bash
+git branch --show-current
+```
+
+This will simply print the name of your current branch, for example: `main`.
+
+A more common command, as I mentioned before, is:
+
+```bash
+git branch
+```
+
+This will list all your local branches and put an asterisk `(*)` next to the one you're currently on.
+
+```
+* main
+  some-other-branch
+```
+
+Finally, many developers (myself included) often just run `git status`. The very first line of its output tells you which branch you're on, and it also gives you other useful information about your files.
+
+```bash
+git status
+```
+
+Output:
+```
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+```
+
+---
+
