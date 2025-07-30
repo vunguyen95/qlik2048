@@ -1,7 +1,6 @@
 //utility function for the 2048 game
 
 const initializeBoard = () => {
-  //return a 4x4 null array
   const newBoard = Array(4)
     .fill(null)
     .map(() => Array(4).fill(null));
