@@ -6,7 +6,7 @@ import "./components/Tile/Tile.css";
 import "./overlay.css";
 
 import Grid from "./components/Grid/Grid.jsx";
-import utils from "./utility.js";
+import utils from "./utils/utility.js";
 /*---------------------------Game---------------------------------*/
 function Game() {
   const [board, setBoard] = useState(utils.initializeBoard());
