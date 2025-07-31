@@ -1,0 +1,136 @@
+.tile {
+  /* dimension */
+  width: 95px;
+  height: 100px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 50px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  z-index: 1;
+}
+
+.tile-null {
+  background-color: #cdc1b4;
+  color: transparent;
+}
+.tile-2 {
+  background-color: #eee4da;
+  color: #776e65;
+}
+.tile-4 {
+  background-color: #ede0c8;
+  color: #776e65;
+}
+.tile-8 {
+  background-color: #f2b179;
+  color: #f9f6f2;
+}
+
+.tile-16 {
+  background-color: #f59563;
+  color: #f9f6f2;
+}
+
+.tile-32 {
+  background-color: #f67c5f;
+  color: #f9f6f2;
+}
+
+.tile-64 {
+  background-color: #f65e3b;
+  color: #f9f6f2;
+}
+
+.tile-128 {
+  background-color: #edcf72;
+  color: #f9f6f2;
+  font-size: 40px;
+}
+
+.tile-256 {
+  background-color: #edcc61;
+  color: #f9f6f2;
+  font-size: 40px;
+}
+
+.tile-512 {
+  background-color: #edc850;
+  color: #f9f6f2;
+  font-size: 40px;
+}
+
+.tile-1024 {
+  background-color: #f1c83e;
+  color: #f9f6f2;
+  font-size: 32px;
+}
+
+.tile-2048 {
+  background-color: #edc22e;
+  color: #f9f6f2;
+  font-size: 32px;
+}
+
+.tile-max {
+  background-color: #d3b013;
+  color: #f9f6f2;
+  font-size: 32px;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.tile.new {
+  animation: popIn 0.2s ease-in-out;
+}
+
+@keyframes slide {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(var(--move-x), var(--move-y));
+  }
+}
+
+.tile.sliding {
+  animation: slide 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+  z-index: 2;
+  position: relative;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+@keyframes merge {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    transform: scale(1.33);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.tile.merged {
+  animation: merge 0.3s ease-in-out;
+  z-index: 4;
+}

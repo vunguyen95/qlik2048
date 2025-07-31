@@ -1,0 +1,144 @@
+/* the whole thing */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 430px;
+  min-height: 100vh;
+  /*background-color: #faf8ef; */
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 22px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.game-container {
+  background-color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /*min-height: 100vh;*/
+  padding: 16px;
+  font-family: sans-serif;
+  border-radius: 15px;
+}
+
+.game-card {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-box {
+  font-size: 50px;
+  font-weight: bold;
+  background-color: #edc22e;
+  color: #f9f6f2;
+  padding: 30px 30px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 450px;
+  margin-bottom: 10px;
+}
+
+.right-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.score-box {
+  display: flex;
+  gap: 15px;
+}
+.score-container {
+  background-color: #bbada0;
+  padding: 10px 20px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.score-title {
+  font-size: 30px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.score-value {
+  font-size: 24px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.score-thing {
+  font-size: 20px;
+  font-weight: semibold;
+  color: #180d80 !important;
+  margin-bottom: 16px;
+}
+
+.button-box {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  margin-right: 10px;
+  align-items: flex-end;
+}
+
+.icon-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-button svg {
+  fill: #332a1f;
+}
+
+.button {
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 10px 20px;
+  font-size: 24px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #bbada0;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}

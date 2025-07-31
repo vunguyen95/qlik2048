@@ -1,0 +1,16 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 430px;
+  padding: 10px;
+  background-color: #bbada0;
+  border-radius: 6px;
+  position: relative;
+}
+
+.board-container {
+  position: relative;
+  width: 430px;
+  height: 430px;
+}

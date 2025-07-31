@@ -1,191 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
-import "./App.css";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { FaPlay, FaPause, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import "./style/global.css";
+import "./components/Grid/Grid.css";
+import "./components/Tile/Tile.css";
+import "./overlay.css";
+
+import Grid from "./components/Grid/Grid.jsx";
 import utils from "./utility.js";
-
-/*---------------------------Tile---------------------------------*/
-function Tile({ value, isNew, movement, isMerged }) {
-  const getClass = (value) => {
-    if (!value) {
-      return `tile tile-null`;
-    }
-    if (value > 2048) {
-      return `tile tile-max`;
-    }
-    return `tile tile-${value}`;
-  };
-
-  const getMovementStyle = () => {
-    if (!movement) return {};
-
-    const tileSize = 95;
-    const gap = 10;
-    const totalSize = tileSize + gap;
-    const deltaX = (movement.to.col - movement.from.col) * totalSize;
-    const deltaY = (movement.to.row - movement.from.row) * totalSize;
-
-    return {
-      "--move-x": `${deltaX}px`,
-      "--move-y": `${deltaY}px`,
-    };
-  };
-
-  const movementStyle = getMovementStyle();
-
-  return (
-    <div
-      className={`${getClass(value)} ${isNew ? "new" : " "} ${
-        movement ? "sliding" : ""
-      } ${isMerged ? "merged" : " "}`}
-      style={movementStyle}
-    >
-      {value || " "}{" "}
-    </div>
-  );
-}
-
-/*---------------------------Grid---------------------------------*/
-function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
-  useEffect(() => {
-    let direction = null;
-    const handleKey = (event) => {
-      switch (event.key) {
-        case "ArrowUp":
-          direction = "up";
-          break;
-        case "ArrowDown":
-          direction = "down";
-          break;
-        case "ArrowLeft":
-          direction = "left";
-          break;
-        case "ArrowRight":
-          direction = "right";
-          break;
-        default:
-          return;
-      }
-
-      event.preventDefault();
-      if (direction) {
-        onMove(direction);
-      }
-    };
-
-    let startX = null;
-    let startY = null;
-    let minDistance = 50;
-
-    const handleTouchStart = (event) => {
-      startX = event.touches[0].clientX;
-      startY = event.touches[0].clientY;
-    };
-    const handleTouchEnd = (event) => {
-      let direction = null;
-      const endX = event.changedTouches[0].clientX;
-      const endY = event.changedTouches[0].clientY;
-      const deltaX = Math.abs(endX - startX);
-      const deltaY = Math.abs(endY - startY);
-      if (deltaX < minDistance && deltaY < minDistance) return;
-      if (deltaX > deltaY) {
-        direction = endX > startX ? "right" : "left";
-      }
-      if (deltaY > deltaX) {
-        direction = endY > startY ? "down" : "up";
-      }
-
-      event.preventDefault();
-      if (direction) {
-        onMove(direction);
-      }
-      startX = null;
-      startY = null;
-    };
-
-    const handleTouchMove = (event) => {
-      event.preventDefault();
-    };
-
-    window.addEventListener("keydown", handleKey);
-    window.addEventListener("touchstart", handleTouchStart, { passive: false });
-    window.addEventListener("touchend", handleTouchEnd, { passive: false });
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
-    //Remember cleaning up, otherwise trouble!
-    return () => {
-      window.removeEventListener("keydown", handleKey);
-      window.removeEventListener("touchstart", handleTouchStart, {
-        passive: false,
-      });
-      window.removeEventListener("touchend", handleTouchEnd, {
-        passive: false,
-      });
-      window.removeEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
-    };
-  }, [onMove]);
-
-  const getTileMovement = (rowIndex, colIndex) => {
-    if (!movementData) return null;
-    return movementData.find(
-      (movement) =>
-        movement.from.row === rowIndex && movement.from.col === colIndex
-    );
-  };
-
-  const isMerged = (rowIndex, colIndex) => {
-    if (!mergedTiles) return false;
-    return mergedTiles.some(
-      (pos) => pos.row === rowIndex && pos.col === colIndex
-    );
-  };
-
-  return (
-    <div className="grid-container">
-      {Array(4)
-        .fill(null)
-        .map((_, rowIndex) =>
-          Array(4)
-            .fill(null)
-            .map((_, colIndex) => (
-              <div
-                key={`bg-${rowIndex}-${colIndex}`}
-                className="tile tile-null"
-                style={{
-                  position: "absolute",
-                  left: `${10 + colIndex * 105}px`,
-                  top: `${10 + rowIndex * 110}px`,
-                  zIndex: 0,
-                }}
-              />
-            ))
-        )}
-      {board.map((row, rowIndex) =>
-        row.map((tileValue, colIndex) => {
-          const movement = getTileMovement(rowIndex, colIndex);
-
-          return (
-            <Tile
-              key={`${rowIndex}-${colIndex}`}
-              value={tileValue}
-              isNew={
-                Array.isArray(newTile)
-                  ? newTile.some(
-                      (pos) => pos.row == rowIndex && pos.col == colIndex
-                    )
-                  : tileValue !== null &&
-                    newTile?.row === rowIndex &&
-                    newTile?.col === colIndex
-              }
-              movement={movement}
-              isMerged={isMerged(rowIndex, colIndex)}
-            />
-          );
-        })
-      )}
-    </div>
-  );
-}
-
 /*---------------------------Game---------------------------------*/
 function Game() {
   const [board, setBoard] = useState(utils.initializeBoard());
@@ -198,7 +19,14 @@ function Game() {
   const [mergedTiles, setMergedTiles] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const [isPaused, setIsPaused] = useState(false);
+  const [isMute, setIsMute] = useState(false);
+
+  const slideSound = useRef(null); //dont create a new sound every render.
+  const mergeSound = useRef(null);
   useEffect(() => {
+    slideSound.current = new Audio("/sounds/slide.wav");
+    mergeSound.current = new Audio("/sounds/merge.wav");
     let firstBoard = utils.initializeBoard();
     const pos1 = utils.addRandomTile(firstBoard);
     const pos2 = utils.addRandomTile(firstBoard);
@@ -243,7 +71,7 @@ function Game() {
 
   const handleMove = useCallback(
     (direction) => {
-      if (isAnimating || gameOver) return; //NO INPUT DURING ANIMATION, OTHERWISE MIXED UP BOARD STATE.
+      if (isAnimating || gameOver || isPaused) return; //NO INPUT DURING ANIMATION, OTHERWISE MIXED UP BOARD STATE.
 
       let newBoard = board.map((row) => [...row]);
       let newScore = score;
@@ -303,6 +131,15 @@ function Game() {
       }
 
       if (boardChange) {
+        if (!isMute) {
+          if (allMergedTiles.length > 0) {
+            mergeSound.current.currentTime = 0;
+            mergeSound.current.play();
+          } else {
+            slideSound.current.currentTime = 0;
+            slideSound.current.play();
+          }
+        }
         //phase 1: SLIDING ONLY
         setIsAnimating(true);
         setMovementData(movementData);
@@ -319,7 +156,7 @@ function Game() {
         }, 200);
       }
     },
-    [board, score, gameOver, isAnimating]
+    [board, score, gameOver, isAnimating, isMute, isPaused]
   );
 
   const handleRestart = () => {
@@ -334,20 +171,40 @@ function Game() {
     setGameOver(false);
   };
 
+  const handlePause = () => {
+    setIsPaused(!isPaused);
+  };
+  const handleMute = () => {
+    setIsMute(!isMute);
+  };
   return (
     <div className="game-container">
       <div className="header">
-        <h1 className="title" style={{ lineHeight: 1 }}>
+        <h1 className="title-box" style={{ lineHeight: 1 }}>
           2048 <br /> <span style={{ fontSize: "0.5em" }}> by Vu </span>
         </h1>
-        <div className="score-box">
-          <div className="score-container">
-            <div className="score-title"> Score </div>
-            <div className="score-value"> {score} </div>
+        <div className="right-header">
+          <div className="score-box">
+            <div className="score-container">
+              <div className="score-title"> Score </div>
+              <div className="score-value"> {score} </div>
+            </div>
+            <div className="score-container">
+              <div className="score-title"> Best </div>
+              <div className="score-value"> {bestScore} </div>
+            </div>
           </div>
-          <div className="score-container">
-            <div className="score-title"> Best </div>
-            <div className="score-value"> {bestScore} </div>
+          <div className="button-box">
+            <button className="icon-button" onClick={handlePause}>
+              {isPaused ? <FaPause size="30px" /> : <FaPlay size="30px" />}
+            </button>
+            <button className="icon-button" onClick={handleMute}>
+              {isMute ? (
+                <FaVolumeMute size="30px" />
+              ) : (
+                <FaVolumeUp size="30px" />
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -370,6 +227,16 @@ function Game() {
             <h2>Game Over! You score: {score} points</h2>
             <button onClick={handleRestart} className="button">
               Restart Game
+            </button>
+          </div>
+        </div>
+      )}
+      {isPaused && (
+        <div className="pause-overlay">
+          <div className="pause-box">
+            <h2> Paused</h2>
+            <button onClick={handlePause} className="button">
+              Resume
             </button>
           </div>
         </div>
