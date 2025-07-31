@@ -20,7 +20,7 @@ function Tile({ value, isNew, movement, isMerged }) {
   const getMovementStyle = () => {
     if (!movement) return {};
 
-    const tileWidth = 70; // slightly smaller, so it wont slide out of the grid.
+    const tileWidth = 70; // slightly smaller, better animation (wont slide out).
     const tileHeight = 75;
     const gap = 10;
     const deltaX = (movement.to.col - movement.from.col) * (tileWidth + gap);
