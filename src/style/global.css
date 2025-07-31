@@ -96,13 +96,14 @@ h1 {
 
 .score-box {
   display: flex;
-  gap: 15px;
+  gap: 10px;
 }
 .score-container {
   background-color: #bbada0;
   padding: 10px 10px;
   border-radius: 15px;
   text-align: center;
+  width: 100px;
 }
 
 .score-title {
@@ -114,7 +115,7 @@ h1 {
   color: #756d6d;
 }
 .score-value {
-  font-size: 24px;
+  font-size: 20px;
   color: #fff;
   font-weight: bold;
 }
