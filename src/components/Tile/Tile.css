@@ -1,13 +1,13 @@
 .tile {
-  /* dimension */
-  width: 95px;
-  height: 100px;
+  /* dimensions, iphone SE reference, 1vw = 3.75px */
+  width: 70px;
+  height: 75px;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  font-size: 50px;
+  /*font-size: clamp(40px, 10.5vw, 45px);*/
   font-weight: bold;
   border: none;
   border-radius: 6px;
@@ -49,37 +49,31 @@
 .tile-128 {
   background-color: #edcf72;
   color: #f9f6f2;
-  font-size: 40px;
 }
 
 .tile-256 {
   background-color: #edcc61;
   color: #f9f6f2;
-  font-size: 40px;
 }
 
 .tile-512 {
   background-color: #edc850;
   color: #f9f6f2;
-  font-size: 40px;
 }
 
 .tile-1024 {
   background-color: #f1c83e;
   color: #f9f6f2;
-  font-size: 32px;
 }
 
 .tile-2048 {
   background-color: #edc22e;
   color: #f9f6f2;
-  font-size: 32px;
 }
 
 .tile-max {
   background-color: #d3b013;
   color: #f9f6f2;
-  font-size: 32px;
 }
 
 @keyframes popIn {

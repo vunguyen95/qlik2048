@@ -109,8 +109,8 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
                 className="tile tile-null"
                 style={{
                   position: "absolute",
-                  left: `${10 + colIndex * 105}px`,
-                  top: `${10 + rowIndex * 110}px`,
+                  left: `${10 + colIndex * 80}px`,
+                  top: `${10 + rowIndex * 85}px`,
                   zIndex: 0,
                 }}
               />

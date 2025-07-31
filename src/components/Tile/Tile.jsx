@@ -11,14 +11,20 @@ function Tile({ value, isNew, movement, isMerged }) {
     return `tile tile-${value}`;
   };
 
+  const getFontSize = () => {
+    if (!value) return {};
+    const numDigits = value.toString().length;
+    if (numDigits <= 2) return "40px";
+    if (numDigits > 2) return `${40 - (numDigits - 2) * 5}px`;
+  };
   const getMovementStyle = () => {
     if (!movement) return {};
 
-    const tileSize = 95;
+    const tileWidth = 70; // slightly smaller, so it wont slide out of the grid.
+    const tileHeight = 75;
     const gap = 10;
-    const totalSize = tileSize + gap;
-    const deltaX = (movement.to.col - movement.from.col) * totalSize;
-    const deltaY = (movement.to.row - movement.from.row) * totalSize;
+    const deltaX = (movement.to.col - movement.from.col) * (tileWidth + gap);
+    const deltaY = (movement.to.row - movement.from.row) * (tileHeight + gap);
 
     return {
       "--move-x": `${deltaX}px`,
@@ -33,7 +39,7 @@ function Tile({ value, isNew, movement, isMerged }) {
       className={`${getClass(value)} ${isNew ? "new" : " "} ${
         movement ? "sliding" : ""
       } ${isMerged ? "merged" : " "}`}
-      style={movementStyle}
+      style={{ ...movementStyle, fontSize: getFontSize() }}
     >
       {value || " "}{" "}
     </div>

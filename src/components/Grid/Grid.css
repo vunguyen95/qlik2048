@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  width: 430px;
+  width: 330px;
   padding: 10px;
   background-color: #bbada0;
   border-radius: 6px;
@@ -11,6 +11,6 @@
 
 .board-container {
   position: relative;
-  width: 430px;
+  width: 330px;
   height: 430px;
 }
