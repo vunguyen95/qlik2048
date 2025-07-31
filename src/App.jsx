@@ -1,9 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { FaPlay, FaPause, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import {
+  FaPlay,
+  FaPause,
+  FaVolumeMute,
+  FaVolumeUp,
+  FaSun,
+  FaMoon,
+} from "react-icons/fa";
 import "./style/global.css";
 import "./components/Grid/Grid.css";
 import "./components/Tile/Tile.css";
 import "./overlay.css";
+import "./style/button.css";
 
 import Grid from "./components/Grid/Grid.jsx";
 import utils from "./utils/utility.js";
@@ -21,6 +29,7 @@ function Game() {
 
   const [isPaused, setIsPaused] = useState(false);
   const [isMute, setIsMute] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   const slideSound = useRef(null); //dont create a new sound every render.
   const mergeSound = useRef(null);
@@ -177,26 +186,36 @@ function Game() {
   const handleMute = () => {
     setIsMute(!isMute);
   };
+  const handleDark = () => {
+    setIsDark(!isDark);
+  };
   return (
-    <div className="game-container">
+    <div className={`game-container ${isDark ? "dark" : ""}`}>
       <div className="header">
-        <h1 className="title-box" style={{ lineHeight: 1 }}>
+        <h1
+          className={`title-box ${isDark ? "dark" : ""}`}
+          style={{ lineHeight: 1 }}
+        >
           2048 <br /> <span style={{ fontSize: "0.5em" }}> by Vu </span>
         </h1>
         <div className="right-header">
           <div className="score-box">
             <div className="score-container">
-              <div className="score-title"> Score </div>
-              <div className="score-value"> {score} </div>
+              <div className={`score-title ${isDark ? "dark" : ""}`}>Score</div>
+              <div className={`score-value ${isDark ? "dark" : ""}`}>
+                {score}
+              </div>
             </div>
             <div className="score-container">
-              <div className="score-title"> Best </div>
-              <div className="score-value"> {bestScore} </div>
+              <div className={`score-title ${isDark ? "dark" : ""}`}>Best</div>
+              <div className={`score-value ${isDark ? "dark" : ""}`}>
+                {bestScore}
+              </div>
             </div>
           </div>
-          <div className="button-box">
+          <div className="icon-box">
             <button className="icon-button" onClick={handlePause}>
-              {isPaused ? <FaPause size="30px" /> : <FaPlay size="30px" />}
+              {isPaused ? <FaPlay size="30px" /> : <FaPause size="30px" />}
             </button>
             <button className="icon-button" onClick={handleMute}>
               {isMute ? (
@@ -205,11 +224,14 @@ function Game() {
                 <FaVolumeUp size="30px" />
               )}
             </button>
+            <button className="icon-button" onClick={handleDark}>
+              {isDark ? <FaSun size="30px" /> : <FaMoon size="30px" />}
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="game-card">
+      <div className={`game-card ${isDark ? "dark" : ""}`}>
         <Grid
           board={board}
           onMove={handleMove}
@@ -217,7 +239,10 @@ function Game() {
           movementData={movementData}
           mergedTiles={mergedTiles}
         />
-        <button onClick={handleRestart} className="button">
+        <button
+          onClick={handleRestart}
+          className={`button ${isDark ? "dark" : ""}`}
+        >
           Restart Game
         </button>
       </div>

@@ -6,7 +6,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #04204b;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -21,7 +21,7 @@ body {
   align-items: center;
   /*min-width: 430px; disable for responsive*/
   min-height: 100vh;
-  /*background-color: #faf8ef; */
+  background-color: #262633;
 }
 
 h1 {
@@ -45,6 +45,10 @@ h1 {
   border-radius: 15px;
 }
 
+.game-container.dark {
+  background-color: #333;
+}
+
 .game-card {
   background-color: #fff;
   padding: 10px;
@@ -55,6 +59,9 @@ h1 {
   align-items: center;
 }
 
+.game-card.dark {
+  background-color: #4e4c4c;
+}
 .header {
   display: flex;
   justify-content: space-between;
@@ -69,6 +76,10 @@ h1 {
   align-items: flex-end;
 }
 
+.right-header.dark {
+  color: #86837e;
+}
+
 .title-box {
   font-size: 40px;
   font-weight: bold;
@@ -78,6 +89,9 @@ h1 {
   border-radius: 10px;
   margin-bottom: 10px;
   text-align: center;
+}
+.title-box.dark {
+  color: #756d6d;
 }
 
 .score-box {
@@ -96,11 +110,17 @@ h1 {
   color: #fff;
   font-weight: bold;
 }
-
+.score-title.dark {
+  color: #756d6d;
+}
 .score-value {
   font-size: 24px;
   color: #fff;
   font-weight: bold;
+}
+
+.score-value.dark {
+  color: #756d6d;
 }
 
 .score-thing {
@@ -108,38 +128,4 @@ h1 {
   font-weight: semibold;
   color: #180d80 !important;
   margin-bottom: 16px;
-}
-
-.button-box {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  margin-right: 10px;
-  align-items: flex-end;
-}
-
-.icon-button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.icon-button svg {
-  fill: #332a1f;
-}
-
-.button {
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 10px 20px;
-  font-size: 24px;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #bbada0;
-  cursor: pointer;
-  transition: border-color 0.25s;
 }

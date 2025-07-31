@@ -1,0 +1,37 @@
+.icon-box {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  margin-right: 10px;
+  align-items: flex-end;
+}
+
+.icon-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-button svg {
+  fill: #705f4b;
+}
+
+.button {
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 10px 20px;
+  font-size: 24px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #bbada0;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+.button.dark {
+  color: #756d6d;
+}
