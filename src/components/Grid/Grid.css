@@ -1,14 +1,14 @@
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  width: 330px;
-  padding: 10px;
+  grid-template-columns: repeat(4, 1fr); /*2d flex*/
+  gap: var(--gap-size);
+  /*width: 330px;*/
+  padding: var(--gap-size);
   background-color: #bbada0;
   border-radius: 6px;
   position: relative;
 }
-
+/* reserved for future use, responsive design*/
 .board-container {
   position: relative;
   width: 330px;

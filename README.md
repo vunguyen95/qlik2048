@@ -1,12 +1,35 @@
-# React + Vite
+# 2048-Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository is reserved only for the assessment interview of Qlik and self-learning.
 
-Currently, two official plugins are available:
+This project is a web-based implementation of the classic 2048 game, built with React. It features a clean interface, smooth animation and several features of Vu Nguyen.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Included features
 
-## Expanding the ESLint configuration
+## Remaining work-items
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Towards Scalability and Maintenance
+
+- Modularisation
+  - Extract JSX in App.jsx into Header, Game, Overlay...
+  - Extract Game logic in App.jsx
+- Responsive display
+
+## Technologies
+
+This project is built with modern web technologies:
+
+- Framework: [React](https://react.dev/)
+- Build Tool: [Vite](https://vite.dev/)
+- Language: Javascript
+- Styling: CSS
+- Icons: [react-icons](https://react-icons.github.io/react-icons/)
+
+## Requirements
+
+To run this project locally, you need
+
+- Node.js (v18.x or higher)
+- npm
+
+### Installation &

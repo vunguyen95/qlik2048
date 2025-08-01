@@ -10,17 +10,21 @@ import {
 import "./style/global.css";
 import "./components/Grid/Grid.css";
 import "./components/Tile/Tile.css";
-import "./overlay.css";
+import "./style/overlay.css";
 import "./style/button.css";
 
 import Grid from "./components/Grid/Grid.jsx";
 import utils from "./utils/utility.js";
+import * as constants from "./constants/game.js";
 /*---------------------------Game---------------------------------*/
 function Game() {
   const [board, setBoard] = useState(utils.initializeBoard());
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [hasWon, setHasWon] = useState(false);
   const [bestScore, setBestScore] = useState(0);
+  const [highestTile, setHighestTile] = useState(0);
+  const [showWinBox, setShowWinBox] = useState(false);
 
   const [newTile, setNewTile] = useState(null);
   const [movementData, setMovementData] = useState(null);
@@ -33,6 +37,8 @@ function Game() {
 
   const slideSound = useRef(null); //dont create a new sound every render.
   const mergeSound = useRef(null);
+
+  //one-time things deps = []: sound, initialize board, bestScore. (set-up and retrieve)
   useEffect(() => {
     slideSound.current = new Audio("/sounds/slide.wav");
     mergeSound.current = new Audio("/sounds/merge.wav");
@@ -44,13 +50,6 @@ function Game() {
   }, []);
 
   useEffect(() => {
-    if (utils.checkGameOver(board)) {
-      setGameOver(true);
-    }
-  }, [board]);
-
-  //best Score
-  useEffect(() => {
     const savedBestScore = localStorage.getItem("bestScore");
     if (savedBestScore) {
       setBestScore(parseInt(savedBestScore));
@@ -58,22 +57,49 @@ function Game() {
   }, []);
 
   useEffect(() => {
+    if (utils.checkGameOver(board)) {
+      setGameOver(true);
+    }
+  }, [board]);
+
+  useEffect(() => {
+    const maxTile = utils.getHighestTile(board);
+    setHighestTile(maxTile);
+  }, [board]);
+
+  useEffect(() => {
+    if (highestTile === constants.WIN_TILE && !hasWon) {
+      setHasWon(true);
+      setShowWinBox(true);
+    }
+  }, [highestTile, hasWon]);
+  //useEffect for better performance.
+  useEffect(() => {
     if (score > bestScore) {
       setBestScore(score);
-      localStorage.setItem("bestScore", bestScore);
+      localStorage.setItem("bestScore", score);
+      // if I use bestScore, it will be lagged behind, as the bestScore has not been updated yet.
+      //It will be only updated when Game is re-rendered.
+      //set will not update the state immediately!
     }
   }, [score, bestScore]);
 
   useEffect(() => {
     if (mergedTiles.length > 0) {
-      const timer = setTimeout(() => setMergedTiles([]), 300);
+      const timer = setTimeout(
+        () => setMergedTiles([]),
+        constants.ANIMATION_MERGE_DURATION
+      );
       return () => clearTimeout(timer);
     }
   }, [mergedTiles]);
 
   useEffect(() => {
     if (newTile) {
-      const timer = setTimeout(() => setNewTile(null), 200);
+      const timer = setTimeout(
+        () => setNewTile(null),
+        constants.ANIMATION_NEW_TILE_DURATION
+      );
       return () => clearTimeout(timer);
     }
   }, [newTile]);
@@ -162,7 +188,7 @@ function Game() {
           setScore(newScore);
           setMovementData(null); //Dont forget.
           setIsAnimating(false); // Dont forget
-        }, 200);
+        }, constants.ANIMATION_SLIDE_DURATION);
       }
     },
     [board, score, gameOver, isAnimating, isMute, isPaused]
@@ -178,6 +204,14 @@ function Game() {
     setMovementData(null);
     setMergedTiles([]);
     setGameOver(false);
+    setShowWinBox(false);
+    setHasWon(false);
+    setHighestTile(0);
+    setIsAnimating(false); // probably not needed
+  };
+
+  const handleContinue = () => {
+    setShowWinBox(false);
   };
 
   const handlePause = () => {
@@ -189,8 +223,23 @@ function Game() {
   const handleDark = () => {
     setIsDark(!isDark);
   };
+
+  //Game Configuration
+  const gameConfig = {
+    "--tile-width": `${constants.TILE_WIDTH}px`,
+    "--tile-height": `${constants.TILE_HEIGHT}px`,
+    "--icon-size": `${constants.ICON_SIZE}px`,
+    "--gap-size": `${constants.GAP_SIZE}px`,
+    "--animation-slide-duration": `${constants.ANIMATION_SLIDE_DURATION}ms`,
+    "--animation-merge-duration": `${constants.ANIMATION_MERGE_DURATION}ms`,
+    "--animation-new-tile-duration": `${constants.ANIMATION_NEW_TILE_DURATION}ms`,
+  };
+
   return (
-    <div className={`game-container ${isDark ? "dark" : ""}`}>
+    <div
+      className={`game-container ${isDark ? "dark" : ""}`}
+      style={gameConfig}
+    >
       <div className="header">
         <h1
           className={`title-box ${isDark ? "dark" : ""}`}
@@ -215,17 +264,25 @@ function Game() {
           </div>
           <div className="icon-box">
             <button className="icon-button" onClick={handlePause}>
-              {isPaused ? <FaPlay size="30px" /> : <FaPause size="30px" />}
+              {isPaused ? (
+                <FaPlay size={constants.ICON_SIZE} />
+              ) : (
+                <FaPause size={constants.ICON_SIZE} />
+              )}
             </button>
             <button className="icon-button" onClick={handleMute}>
               {isMute ? (
-                <FaVolumeMute size="30px" />
+                <FaVolumeMute size={constants.ICON_SIZE} />
               ) : (
-                <FaVolumeUp size="30px" />
+                <FaVolumeUp size={constants.ICON_SIZE} />
               )}
             </button>
             <button className="icon-button" onClick={handleDark}>
-              {isDark ? <FaSun size="30px" /> : <FaMoon size="30px" />}
+              {isDark ? (
+                <FaSun size={constants.ICON_SIZE} />
+              ) : (
+                <FaMoon size={constants.ICON_SIZE} />
+              )}
             </button>
           </div>
         </div>
@@ -250,7 +307,10 @@ function Game() {
         <div className="game-over-overlay">
           <div className="game-over-box">
             <h2>Game Over! You score: {score} points</h2>
-            <button onClick={handleRestart} className="button">
+            <button
+              onClick={handleRestart}
+              className={`button ${isDark ? "dark" : " "}`}
+            >
               Restart Game
             </button>
           </div>
@@ -260,9 +320,33 @@ function Game() {
         <div className="pause-overlay">
           <div className="pause-box">
             <h2> Paused</h2>
-            <button onClick={handlePause} className="button">
+            <button
+              onClick={handlePause}
+              className={`button ${isDark ? "dark" : " "}`}
+            >
               Resume
             </button>
+          </div>
+        </div>
+      )}
+      {showWinBox && (
+        <div className="win-overlay">
+          <div className="win-box">
+            <h2> You won! Wanna test your limit?</h2>
+            <div className="win-box-container">
+              <button
+                className={`button ${isDark ? "dark" : " "}`}
+                onClick={handleContinue}
+              >
+                Continue
+              </button>
+              <button
+                className={`button ${isDark ? "dark" : " "}`}
+                onClick={handleRestart}
+              >
+                New Game
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,4 +1,3 @@
-/* the whole thing */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -40,7 +39,7 @@ h1 {
   align-items: center;
   justify-content: center;
   /*min-height: 100vh;*/
-  padding: 10px;
+  padding: var(--gap-size);
   font-family: sans-serif;
   border-radius: 15px;
 }
@@ -91,16 +90,16 @@ h1 {
   text-align: center;
 }
 .title-box.dark {
-  color: #756d6d;
+  color: #333030;
 }
 
 .score-box {
   display: flex;
-  gap: 10px;
+  gap: var(--gap-size);
 }
 .score-container {
   background-color: #bbada0;
-  padding: 10px 10px;
+  padding: var(--gap-size) var(--gap-size);
   border-radius: 15px;
   text-align: center;
   width: 100px;
@@ -112,7 +111,7 @@ h1 {
   font-weight: bold;
 }
 .score-title.dark {
-  color: #756d6d;
+  color: #333030;
 }
 .score-value {
   font-size: 20px;
@@ -121,7 +120,7 @@ h1 {
 }
 
 .score-value.dark {
-  color: #756d6d;
+  color: #333030;
 }
 
 .score-thing {
