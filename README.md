@@ -1,8 +1,7 @@
-# 2048-Game
+# 2048-Game-VU-NGUYEN
 
-This repository is reserved only for the assessment interview of Qlik and self-learning.
-
-This project is a web-based implementation of the classic 2048 game, built with React. It features a clean interface, smooth animation and several features of Vu Nguyen.
+This repository is reserved only for the assessment interview of Qlik and self-learning. It is a web-based implementation of the classic _2048 game_, built with React. It features a clean interface, smooth animation and several other features.
+The game is deployed on Netlify (from this repository). Click here [link-to-deployment](https://vuqlik-2048.netlify.app/)
 
 ## Included features
 
@@ -55,13 +54,24 @@ To run this project locally, you need
 
 ### Installation & Setup
 
-The game is deployed on Netlify (from this repository). Click here [link-to-deployment](https://vuqlik-2048.netlify.app/)
+1. **Clone the repository**
 
-For local installment:
+```bash
+git clone https://github.com/vunguyen95/qlik2048.git
+cd qlik2048
+```
 
-1. Clone the repository:
-   2.Install dependencies:
-2. Run the development server:
+2.**Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Run the development server**
+
+```bash
+npm run dev
+```
 
 ## Core logic.
 
