@@ -73,6 +73,25 @@ npm run dev
 
 ## Core logic.
 
-1. Stage Management ()
-2. Game Mechanics ()
+1. Stage Management (`src/App.jsx`)
+   - includes game states (`board, score, gameOver...`) is managed with React hooks
+   - passes down props to child components `Grid`
+   - `useEffect(), useRef()` used for side effects (retrieve best score, initiate sounds, checking game-over, `hasWon`, managing animation timers).
+2. Game Mechanics (`src/utils/utility.js`)
+   This module contains the pure functions that are behind the game mechanics.
+
+- `initializeBoard()`: creates an empty 4x4 grid
+- `addRandomTile(board)`: finds empty tiles and place a new tile (90% a 2, 10 % a 4)
+- `handleMove(direction) (src/App.jsx)`: core functions, triggered by player input, by `onMove(direction)` in `Grid()`.
+  - Depending the direction, it iterates through row (`isRow`) or column (`!isRow`), passing to `merge()`.
+  - `merge(arr,score,direction)` : is the heart of the game.
+    - Originally for `"right` direction. If it is `"left" || "up`, reverse the `arr`.
+    - Filters the non-null tiles, performs merging of equal adjacent tiles, updates score
+    - returns new values, tracking data: which tiles is merges, `from` and `to` indices for each tiles.
+  - The `newBoard`, absolute positional changes (`movementData, allMergedTile`) is computed in `handleMove()`, passed down to `Grid()`.
+
 3. Animation Flow
+
+- is handled in `handleMove()`. Divided into two phases:
+  - Sliding phase: `movemetnData` is set in the state, which triggers the CSS transition. User is disabled with `isAnimating()` flag.
+  - Update phase: A `setTimeout`, timed to match animation duration, fires to complete the move. After that, `newBoard, allMergeTiles, newTiles` is set, triggering animation. Also re-enables user input. Animation data is cleared with `useEffect`.
