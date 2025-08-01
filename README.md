@@ -3,6 +3,8 @@
 This repository is reserved only for the assessment interview of Qlik and self-learning. It is a web-based implementation of the classic _2048 game_, built with React. It features a clean interface, smooth animation and several other features.
 The game is deployed on Netlify (from this repository) at [link-to-deployment](https://vuqlik-2048.netlify.app/)
 
+![2048-Game-Screenshot](./Game.png)
+
 ## Included features
 
 - Classic 2048 Gameplay: 4x4 grid where you slide and merge tiles.
