@@ -4,7 +4,7 @@ export const TILE_HEIGHT = 75;
 export const GAP_SIZE = 10;
 export const ICON_SIZE = 30;
 
-export const WIN_TILE = 2048;
+export const WIN_TILE = 128; //for testing
 
 export const ANIMATION_SLIDE_DURATION = 200;
 export const ANIMATION_MERGE_DURATION = 300;
