@@ -74,11 +74,11 @@ npm run dev
 ## Core logic.
 
 1. Stage Management (`src/App.jsx`)
-   - includes game states (`board, score, gameOver...`) is managed with React hooks
-   - passes down props to child components `Grid`
+   - includes game states (`board, score, gameOver...`), managed with React hooks.
+   - passes down props to child components `Grid` (`board, onMove, newTile, movementData, mergedTiles`).
    - `useEffect(), useRef()` used for side effects (retrieve best score, initiate sounds, checking game-over, `hasWon`, managing animation timers).
 2. Game Mechanics (`src/utils/utility.js`)
-   This module contains the pure functions that are behind the game mechanics.
+   This module contains the pure functions that are behind the game mechanic:s
 
 - `initializeBoard()`: creates an empty 4x4 grid
 - `addRandomTile(board)`: finds empty tiles and place a new tile (90% a 2, 10 % a 4)
@@ -93,5 +93,5 @@ npm run dev
 3. Animation Flow
 
 - is handled in `handleMove()`. Divided into two phases:
-  - Sliding phase: `movemetnData` is set in the state, which triggers the CSS transition. User is disabled with `isAnimating()` flag.
+  - Sliding phase: `movementData` is set in the state, which triggers the CSS transition. User is disabled with `isAnimating()` flag.
   - Update phase: A `setTimeout`, timed to match animation duration, fires to complete the move. After that, `newBoard, allMergeTiles, newTiles` is set, triggering animation. Also re-enables user input. Animation data is cleared with `useEffect`.
