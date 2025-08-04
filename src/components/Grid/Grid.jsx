@@ -1,5 +1,21 @@
 import React, { useEffect } from "react";
 import Tile from "../Tile/Tile.jsx";
+import "./Grid.css";
+
+const getTileMovement = (rowIndex, colIndex, movementData) => {
+  if (!movementData) return null;
+  return movementData.find(
+    (movement) =>
+      movement.from.row === rowIndex && movement.from.col === colIndex
+  );
+};
+
+const isMerged = (rowIndex, colIndex, mergedTiles) => {
+  if (!mergedTiles) return false;
+  return mergedTiles.some(
+    (pos) => pos.row === rowIndex && pos.col === colIndex
+  );
+};
 
 function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
   useEffect(() => {
@@ -81,21 +97,6 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
     };
   }, [onMove]);
 
-  const getTileMovement = (rowIndex, colIndex) => {
-    if (!movementData) return null;
-    return movementData.find(
-      (movement) =>
-        movement.from.row === rowIndex && movement.from.col === colIndex
-    );
-  };
-
-  const isMerged = (rowIndex, colIndex) => {
-    if (!mergedTiles) return false;
-    return mergedTiles.some(
-      (pos) => pos.row === rowIndex && pos.col === colIndex
-    );
-  };
-
   return (
     <div className="grid-container">
       {Array(4)
@@ -105,7 +106,7 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
             .fill(null)
             .map((_, colIndex) => (
               <div
-                key={`bg-${rowIndex}-${colIndex}`}
+                key={`bg-${rowIndex}-${colIndex}`} //like the ID of the tile, bg to avoid confusions and bugs.
                 className="tile tile-null"
                 style={{
                   position: "absolute",
@@ -118,7 +119,7 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
         )}
       {board.map((row, rowIndex) =>
         row.map((tileValue, colIndex) => {
-          const movement = getTileMovement(rowIndex, colIndex);
+          const movement = getTileMovement(rowIndex, colIndex, movementData);
 
           return (
             <Tile
@@ -134,7 +135,7 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
                     newTile?.col === colIndex
               }
               movement={movement}
-              isMerged={isMerged(rowIndex, colIndex)}
+              isMerged={isMerged(rowIndex, colIndex, mergedTiles)}
             />
           );
         })

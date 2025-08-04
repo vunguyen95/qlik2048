@@ -8,15 +8,24 @@ import {
   FaMoon,
 } from "react-icons/fa";
 import "./style/global.css";
-import "./components/Grid/Grid.css";
-import "./components/Tile/Tile.css";
 import "./style/overlay.css";
 import "./style/button.css";
 
 import Grid from "./components/Grid/Grid.jsx";
 import utils from "./utils/utility.js";
 import * as constants from "./constants/game.js";
-/*---------------------------Game---------------------------------*/
+
+//Game Configuration. Moved out of the component to avoid re-initializing on every render.
+const gameConfig = {
+  "--tile-width": `${constants.TILE_WIDTH}px`,
+  "--tile-height": `${constants.TILE_HEIGHT}px`,
+  "--icon-size": `${constants.ICON_SIZE}px`,
+  "--gap-size": `${constants.GAP_SIZE}px`,
+  "--animation-slide-duration": `${constants.ANIMATION_SLIDE_DURATION}ms`,
+  "--animation-merge-duration": `${constants.ANIMATION_MERGE_DURATION}ms`,
+  "--animation-new-tile-duration": `${constants.ANIMATION_NEW_TILE_DURATION}ms`,
+};
+
 function Game() {
   const [board, setBoard] = useState(utils.initializeBoard());
   const [score, setScore] = useState(0);
@@ -210,6 +219,8 @@ function Game() {
     setIsAnimating(false); // probably not needed
   };
 
+  // Some of these might be better as functional updates (s => !s) and wrapped in useCallback with empty dependencies.
+  //avoid dependencies on state variables.
   const handleContinue = () => {
     setShowWinBox(false);
   };
@@ -222,17 +233,6 @@ function Game() {
   };
   const handleDark = () => {
     setIsDark(!isDark);
-  };
-
-  //Game Configuration
-  const gameConfig = {
-    "--tile-width": `${constants.TILE_WIDTH}px`,
-    "--tile-height": `${constants.TILE_HEIGHT}px`,
-    "--icon-size": `${constants.ICON_SIZE}px`,
-    "--gap-size": `${constants.GAP_SIZE}px`,
-    "--animation-slide-duration": `${constants.ANIMATION_SLIDE_DURATION}ms`,
-    "--animation-merge-duration": `${constants.ANIMATION_MERGE_DURATION}ms`,
-    "--animation-new-tile-duration": `${constants.ANIMATION_NEW_TILE_DURATION}ms`,
   };
 
   return (

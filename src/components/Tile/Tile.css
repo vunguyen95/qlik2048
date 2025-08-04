@@ -104,10 +104,9 @@
   animation: slide var(--animation-slide-duration)
     cubic-bezier(0.25, 0.46, 0.45, 0.94);
   animation-fill-mode: forwards;
-  z-index: 2;
+  z-index: 2; /*1 doesn't work*/
   position: relative;
-  will-change: transform;
-  backface-visibility: hidden;
+  /*will-change: transform;*/
 }
 
 @keyframes merge {
@@ -127,5 +126,6 @@
 
 .tile.merged {
   animation: merge var(--animation-merge-duration) ease-in-out;
-  z-index: 4;
+  z-index: 3;
+  position: relative;
 }

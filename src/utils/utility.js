@@ -1,4 +1,4 @@
-//utility function for the 2048 game
+//utility pure functions for the 2048 game
 
 const initializeBoard = () => {
   const newBoard = Array(4)
