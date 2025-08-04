@@ -65,6 +65,17 @@ const getLine = (board, idx, isRow) => {
   }
 };
 
+/**
+ * Merges an array of tiles in a given direction
+ * @param {Array<number>} arr array of tile values
+ * @param {number} score current score
+ * @param {string} direction direction of the merge
+ * @returns {Object} An object containing:
+ *  - processedArr: {Array<number>} processed array of tile values
+ *  - score: {number} updated score
+ *  - movement: {Array<{from: number, to: number, value: number}>} list of movement of moved tiles.
+ *  - mergedTiles: {Array<number>} indices of merged tiles
+ */
 const merge = (arr, score, direction) => {
   const size = arr.length;
   const reverse = direction === "left" || direction === "up";

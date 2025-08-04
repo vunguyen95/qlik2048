@@ -30,6 +30,11 @@ const getFontSize = (value) => {
   }
 };
 
+/**
+ * Gets the movement style for a tile based on its movement data
+ * @param {{from: {row: number, col: number}, to: {row: number, col: number}} | null} movement movement data
+ * @returns {{"--move-x": string, "--move-y": string} | {}} movement style for the tile
+ */
 const getMovementStyle = (movement) => {
   if (!movement) return {};
 

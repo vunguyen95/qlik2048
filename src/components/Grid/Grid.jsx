@@ -2,6 +2,14 @@ import React, { useEffect } from "react";
 import Tile from "../Tile/Tile.jsx";
 import "./Grid.css";
 
+/**
+ * Finds movement data for a tile based on its starting positions
+ * @param {number} rowIndex tile row index
+ * @param {number} colIndex tile column index
+ * @param {Array<{from: {row: number, col: number}, to: {row: number, col: number}}>} movementData list of movements.
+ * @returns {{from: {row: number, col: number}, to: {row: number, col: number}} | null}  movement data for the tile, or null if not found.
+ */
+
 const getTileMovement = (rowIndex, colIndex, movementData) => {
   if (!movementData) return null;
   return movementData.find(
@@ -9,6 +17,14 @@ const getTileMovement = (rowIndex, colIndex, movementData) => {
       movement.from.row === rowIndex && movement.from.col === colIndex
   );
 };
+
+/**
+ * Checks if a tile has been merged
+ * @param {number} rowIndex tile row index
+ * @param {number} colIndex tile col index
+ * @param {Array<{row: number, col: number}>} mergedTiles list of merged tiles.
+ * @returns {boolean} true if the tile was merged, false otherwise
+ */
 
 const isMerged = (rowIndex, colIndex, mergedTiles) => {
   if (!mergedTiles) return false;
