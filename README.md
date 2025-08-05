@@ -73,7 +73,7 @@ npm run dev
 
 ## Core logic.
 
-1. Stage Management (`src/App.jsx`)
+1. Stage Management (`src/Game.jsx`)
    - includes game states (`board, score, gameOver...`), managed with React hooks.
    - passes down props to child components `Grid` (`board, onMove, newTile, movementData, mergedTiles`).
    - `useEffect(), useRef()` used for side effects (retrieve best score, initiate sounds, checking game-over, `hasWon`, managing animation timers).
@@ -82,7 +82,7 @@ npm run dev
 
 - `initializeBoard()`: creates an empty 4x4 grid
 - `addRandomTile(board)`: finds empty tiles and place a new tile (90% a 2, 10 % a 4)
-- `handleMove(direction) (src/App.jsx)`: core functions, triggered by player input, by `onMove(direction)` in `Grid()`.
+- `handleMove(direction) (src/Game.jsx)`: core functions, triggered by player input, by `onMove(direction)` in `Grid()`.
   - Depending the direction, it iterates through row (`isRow`) or column (`!isRow`), passing to `merge()`.
   - `merge(arr,score,direction)` : is the heart of the game.
     - Originally for `"right` direction. If it is `"left" || "up`, reverse the `arr`.
