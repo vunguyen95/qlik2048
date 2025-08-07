@@ -4,7 +4,7 @@ import utils from "./utility";
 const { merge } = utils;
 
 describe("merge()", () => {
-  test("merges two 2s when moving right", () => {
+  test("merges two 2s when moving right (2, null, 2, null)", () => {
     const arr = [2, null, 2, null];
     const { processedArr, score, movement, mergedTiles } = merge(
       arr,
@@ -30,7 +30,7 @@ describe("merge()", () => {
     expect(mergedTiles).toEqual([0, 1]);
   });
 
-  test("no movement when nothing changes (right)", () => {
+  test("no movement when nothing changes (2, 4, 8, 16)", () => {
     const arr = [2, 4, 8, 16];
     const { processedArr, score, movement, mergedTiles } = merge(
       arr,
@@ -44,7 +44,7 @@ describe("merge()", () => {
     expect(mergedTiles).toEqual([]);
   });
 
-  test("up acts like left for a single line", () => {
+  test("up acts like left for a single line (2, null, 2, 4)", () => {
     const arr = [2, null, 2, 4];
     const { processedArr, score, mergedTiles, movement } = merge(arr, 0, "up");
     expect(processedArr).toEqual([4, 4, null, null]);
@@ -59,7 +59,7 @@ describe("merge()", () => {
     );
   });
 
-  test("down acts like right for a single line", () => {
+  test("down acts like right for a single line (2, null, 2, 4)", () => {
     const arr = [2, null, 2, 4];
     const { processedArr, score, mergedTiles, movement } = merge(
       arr,
@@ -77,7 +77,7 @@ describe("merge()", () => {
     );
   });
 
-  test("merges with gaps to the left", () => {
+  test("merges with gaps to the left (2, null, null, 2)", () => {
     const arr = [2, null, null, 2];
     const { processedArr, score, mergedTiles, movement } = merge(
       arr,
@@ -97,7 +97,7 @@ describe("merge()", () => {
     expect(movement).toHaveLength(2);
   });
 
-  test("merges with gaps to the right", () => {
+  test("merges with gaps to the right (2, null, null, 2)", () => {
     const arr = [2, null, null, 2];
     const { processedArr, score, mergedTiles, movement } = merge(
       arr,
@@ -116,7 +116,7 @@ describe("merge()", () => {
     );
   });
 
-  test("merges distinct pairs correctly to the right", () => {
+  test("merges distinct pairs correctly to the right (2, 4, 4, 8)", () => {
     const arr = [2, 4, 4, 8];
     const { processedArr, score, mergedTiles, movement } = merge(
       arr,
@@ -135,7 +135,7 @@ describe("merge()", () => {
     );
   });
 
-  test("slides without merge to the left", () => {
+  test("slides without merge to the left (null, 2, null, null)", () => {
     const arr = [null, 2, null, null];
     const { processedArr, score, mergedTiles, movement } = merge(
       arr,
@@ -149,7 +149,7 @@ describe("merge()", () => {
     expect(movement).toEqual([{ from: 1, to: 0, value: 2 }]);
   });
 
-  test("all nulls stay null", () => {
+  test("all nulls stay null (null, null, null, null)", () => {
     const arr = [null, null, null, null];
     const { processedArr, score, mergedTiles, movement } = merge(
       arr,
