@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import Tile from "../Tile/Tile.jsx";
 import "./Grid.css";
+import { TILE_WIDTH, TILE_HEIGHT, GAP_SIZE } from "../../constants/game.js";
 
 /**
  * Finds movement data for a tile based on its starting positions
  * @param {number} rowIndex tile row index
  * @param {number} colIndex tile column index
  * @param {Array<{from: {row: number, col: number}, to: {row: number, col: number}}>} movementData list of movements.
- * @returns {{from: {row: number, col: number}, to: {row: number, col: number}} | null}  movement data for the tile, or null if not found.
+ * @returns {Object}  movement data for the tile, or null if not found.
+ * - movement: {from: {row: number, col: number}, to: {row: number, col: number}}
  */
 
 const getTileMovement = (rowIndex, colIndex, movementData) => {
@@ -31,6 +33,22 @@ const isMerged = (rowIndex, colIndex, mergedTiles) => {
   return mergedTiles.some(
     (pos) => pos.row === rowIndex && pos.col === colIndex
   );
+};
+
+/**
+ * Checks if a tile is new
+ * @param {number} rowIndex tile row index
+ * @param {number} colIndex tile col index
+ * @param {Object | Array<Object>} newTile new tile data
+ * @returns {boolean} true if the tile is new, false otherwise
+ */
+const isNew = (rowIndex, colIndex, newTile) => {
+  if (!Array.isArray(newTile)) {
+    return (
+      newTile !== null && newTile.row === rowIndex && newTile.col === colIndex
+    );
+  }
+  return newTile.some((pos) => pos.row === rowIndex && pos.col === colIndex);
 };
 
 function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
@@ -126,8 +144,8 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
                 className="tile tile-null"
                 style={{
                   position: "absolute",
-                  left: `${10 + colIndex * 80}px`,
-                  top: `${10 + rowIndex * 85}px`,
+                  left: `${10 + colIndex * (TILE_WIDTH + GAP_SIZE)}px`,
+                  top: `${10 + rowIndex * (TILE_HEIGHT + GAP_SIZE)}px`,
                   zIndex: 0,
                 }}
               />
@@ -141,15 +159,7 @@ function Grid({ board, onMove, newTile, movementData, mergedTiles }) {
             <Tile
               key={`${rowIndex}-${colIndex}`}
               value={tileValue}
-              isNew={
-                Array.isArray(newTile)
-                  ? newTile.some(
-                      (pos) => pos.row == rowIndex && pos.col == colIndex
-                    )
-                  : tileValue !== null &&
-                    newTile?.row === rowIndex &&
-                    newTile?.col === colIndex
-              }
+              isNew={isNew(rowIndex, colIndex, newTile)}
               movement={movement}
               isMerged={isMerged(rowIndex, colIndex, mergedTiles)}
             />
