@@ -87,7 +87,7 @@ const merge = (arr, score, direction) => {
     if (inputArr[i] !== null) {
       mergeArr.push({
         value: inputArr[i],
-        originalIndex: i,
+        //originalIndex: i, //redundant.
         merged: false,
         from: [i],
       });
@@ -99,10 +99,7 @@ const merge = (arr, score, direction) => {
       mergeArr[i].value *= 2;
       score += mergeArr[i].value;
       mergeArr[i].merged = true;
-      mergeArr[i].from = [
-        mergeArr[i - 1].originalIndex,
-        mergeArr[i].originalIndex,
-      ];
+      mergeArr[i].from = [mergeArr[i - 1].from[0], mergeArr[i].from[0]];
 
       mergeArr.splice(i - 1, 1);
       i -= 1;
