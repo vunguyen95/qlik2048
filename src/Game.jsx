@@ -37,7 +37,8 @@ function Game() {
 
   const [newTile, setNewTile] = useState(null);
   const [movementData, setMovementData] = useState(null);
-  const [mergedTiles, setMergedTiles] = useState([]);
+  const [mergedTiles, setMergedTiles] = useState([]); //[{row: idx, col: idx}]
+
   const [isAnimating, setIsAnimating] = useState(false);
 
   const [isPaused, setIsPaused] = useState(false);
@@ -75,6 +76,7 @@ function Game() {
     const maxTile = utils.getHighestTile(board);
     setHighestTile(maxTile);
   }, [board]);
+  //could be merged.
 
   useEffect(() => {
     if (highestTile === constants.WIN_TILE && !hasWon) {
@@ -123,7 +125,7 @@ function Game() {
       let movementData = [];
       let allMergedTiles = [];
 
-      const isRow = direction === "left" || direction == "right";
+      const isRow = direction === "left" || direction === "right";
       const size = newBoard.length;
       for (let idx = 0; idx < size; idx++) {
         let originalArr = utils.getLine(newBoard, idx, isRow);
